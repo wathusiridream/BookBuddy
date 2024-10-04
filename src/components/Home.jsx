@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState ,useContext} from 'react';
 import { getAuth, reload, signOut } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import '../WebStyle/Homestyle.css'; // Import the CSS file
@@ -6,12 +6,19 @@ import { IonIcon } from '@ionic/react';
 import { searchCircleOutline } from 'ionicons/icons';
 import { doc, getDoc } from "firebase/firestore";
 import { db , auth } from '../utils/firebase';
-
+import Lessors_Regis from './Lessors_Regis';
+import StepContext , {multiStepContext} from '../StepContext';
 
 const Home = () => {
   const [user, setUser] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
+  const { setStep, userData, finalData ,setUserData } = useContext(multiStepContext); // Correctly destructure the context
+  
+  
+  const goToStep = (step) => {
+    setStep(0);
+  };
 
   useEffect(() => {
     const auth = getAuth();
@@ -49,7 +56,7 @@ const Home = () => {
         navigate("/Rental"); // Adjust the route as necessary
       } else {
         // If the email does not exist, navigate to the registration page
-        navigate("/Lessors-Regis"); // Adjust the route as necessary
+        navigate("/Lessors-regis"); // Adjust the route as necessary
       }
     } else {
       // If the user is not authenticated, maybe prompt login or show an error

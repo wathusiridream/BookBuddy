@@ -4,11 +4,9 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom"; 
 import { db } from '../utils/firebase'; 
 import '../WebStyle/Lessors_Regis_Form.css';
-import Stepper from './Stepper'; // นำเข้า Stepper component
 
 function Lessors_Regis() {
   const [loading, setLoading] = useState(true);
-  const [currentStep, setCurrentStep] = useState(1); // State สำหรับ Stepper
   const navigate = useNavigate();
   const auth = getAuth();
 
@@ -21,36 +19,30 @@ function Lessors_Regis() {
     promptpayNumber: ''
   });
 
-  const nextStep = () => setCurrentStep((prevStep) => Math.min(prevStep + 1, 3));
-  const prevStep = () => setCurrentStep((prevStep) => Math.max(prevStep - 1, 1));
-
   useEffect(() => {
     const fetchUserData = async () => {
       const user = auth.currentUser;
       if (user) {
-        const userDocRef = doc(db, "users", user.uid);
-        const userDocSnap = await getDoc(userDocRef);
-
-        if (userDocSnap.exists()) {
-          const userData = userDocSnap.data();
-          setFormData({
-            name: userData.name || '',
-            lastName: userData.lastName || '',
-            telephone: formatTelephone(userData.telephone || ''),
-            address: userData.address || '',
-            thaiID: formatThaiID(userData.thaiID || ''),
-            promptpayNumber: formatPromptPay(userData.promptpayNumber || '') 
-          });
-        } else {
-          navigate('/user-information');
-        }
-      } else {
-        console.error("No authenticated user");
-        navigate('/login'); 
-      }
+  const userDocRef = doc(db, "users", user.uid);
+  const userDocSnap = await getDoc(userDocRef);
+  if (userDocSnap.exists()) {
+    const userData = userDocSnap.data();
+    setFormData({
+    name: userData.name || '',
+    lastName: userData.lastName || '',
+    telephone: formatTelephone(userData.telephone || ''),
+    address: userData.address || '',
+    thaiID: formatThaiID(userData.thaiID || ''),
+    promptpayNumber: formatPromptPay(userData.promptpayNumber || '') // จัดรูปแบบตรงนี้
+    });
+    } else {
+        navigate('/user-information');}
+    } else {
+      console.error("No authenticated user");
+      navigate('/login'); 
+    }
       setLoading(false); 
     };
-
     fetchUserData();
   }, [auth, navigate]);
 
@@ -88,11 +80,6 @@ function Lessors_Regis() {
       ...prevData,
       [name]: formattedValue,
     }));
-    
-    // Update step based on form completion
-    const stepOrder = ["name", "lastName", "telephone", "address", "thaiID", "promptpayNumber"];
-    const currentIndex = stepOrder.indexOf(name) + 1;
-    setCurrentStep(currentIndex);
   };
 
   const handleSubmit = async (e) => {
@@ -114,13 +101,23 @@ function Lessors_Regis() {
     return <div>Loading...</div>;
   }
 
+  { /*const {currentStep , finalData} = useContext(multiStepContext);
+  
+  function showStep(Step) {
+    switch(Step) {
+      case 1 :
+        return <FirstStep/>
+      case 2 :
+        return <SecondStep/>
+      case 3 :
+        return <ThirdStep/>
+    }
+  } */}
+
   return (
     <div className="lessor-custom-background">
       <div className="lessors-info-page">
         <div className="container">
-
-          
-          <Stepper currentStep={currentStep} /> {/* เพิ่ม Stepper ที่นี่ */}
           <div className="lessors-information">
             <h1>Lessors Information</h1>
             <form onSubmit={handleSubmit}>
