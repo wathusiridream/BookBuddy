@@ -101,19 +101,6 @@ function Lessors_Regis() {
     return <div>Loading...</div>;
   }
 
-  { /*const {currentStep , finalData} = useContext(multiStepContext);
-  
-  function showStep(Step) {
-    switch(Step) {
-      case 1 :
-        return <FirstStep/>
-      case 2 :
-        return <SecondStep/>
-      case 3 :
-        return <ThirdStep/>
-    }
-  } */}
-
   return (
     <div className="lessor-custom-background">
       <div className="lessors-info-page">

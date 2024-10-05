@@ -1,98 +1,113 @@
-html, body {
-    overflow: hidden; /* ปิดการเลื่อนของทั้งหน้าเว็บ */
-    height: 100%;     /* กำหนดความสูงให้ครอบคลุม 100% */
+.lessors-info-page {
+    padding: 5px;
+    background-color: #f9f9f9;
 }
 
 .container {
-    background-color: #fff;
-    border-radius: 25px;
-    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
-    position: fixed;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    overflow: hidden;
-    width: 1200px;
-    max-width: 90%;
-    min-height: 700px;  
+    max-width: 600px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    height: 750px;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    overflow: h;
+    flex-direction: column;
+    box-sizing: border-box;
+    min-height: 100vh; /* Ensure container takes up full viewport height */
+    padding-top: 10px; /* ให้พื้นที่เพียงพอสำหรับ stepper ด้านบน */
+    padding-bottom: 70px;
 }
 
-.lessors-info-page {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    max-width: 100%;
-    background-color: #f6f5f7;
-    background-image: url('bg.jpg');  
-    background-size: cover;         
-    background-position: center;    
-    background-repeat: no-repeat; 
-    min-height: 100vh;
-    position: absolute;
-}
-
-.lessors-information div {
-    display: flex;
-    align-items: center;   
-    margin-bottom: 15px;
+.stepper {
     width: 100%;
-    justify-content: center;
-    justify-items: center;
+    position: relative; /* ปรับตำแหน่งให้เป็น relative */
+    z-index: 1;
 }
 
-.lessors-information label {
-    width: 300px;           /* ปรับขนาดความกว้างของ label ให้อยู่ในบรรทัดเดียวกับ input */
-    margin-right: 10px;     /* ระยะห่างระหว่าง label กับ input */
-    font-weight: bold;
-    text-align: right;
-}
-
-.lessors-information input {
-    flex-grow: 1;           /* ให้ input ขยายตัวตามพื้นที่ที่เหลือ */
-    padding: 10px;          /* เพิ่ม padding ให้ input เพื่อให้ความสูงสม่ำเสมอ */
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    height: 40px;           /* กำหนดความสูงของ input ให้เท่ากัน */
-    max-width: 400px;       /* กำหนดความกว้างสูงสุดของ input */
-}
-
-.lessors-information input[readonly] {
-    background-color: #f0f0f0; /* สีเทา */
-    border: 1px solid #ccc; /* ขอบสีอ่อน */
+.MuiStepper-root {
+    background-color: transparent; /* transparent background for stepper */
 }
   
-.lessors-information input:not([readonly]) {
-    background-color: #fff; /* สีขาว */
-    border: 1px solid #ccc; /* ขอบสีอ่อน */
+.MuiStepLabel-root {
+    color: #3f51b5; /* primary color */
+    margin-top: 0px;
+    margin-bottom: 0px; 
+}
+  
+.MuiStepLabel-active {
+    font-weight: bold; /* make active step bold */
+    margin-top: 0px;
+    margin-bottom: 0px; 
+}
+  
+.MuiStepLabel-completed {
+    color: #4caf50; /* green color for completed steps */
+    margin-top: 0px;
+    margin-bottom: 0px; 
+}
+  
+.loading {
+    text-align: center;
+    font-size: 18px;
+    color: #666;
 }
 
-.lessors-information h1 {
-    justify-content: center;
-    justify-items: center;
-    align-items: center;
+.lessor-information {
+    margin-top: 20px; /* เพิ่มระยะห่างจาก stepper */
+    flex-grow: 1; /* ให้ section นี้ขยายได้ */
+    overflow-y: auto;
+    z-index: 2;
+    width: 50%;
 }
 
-.lessor-custom-background {
-    background-image: url('bg.jpg');
-    background-size: cover; 
-    background-repeat: no-repeat; 
-    background-position: center; 
-    height: 100vh; 
-    width: 100%; 
-    position: absolute; 
-    top: 0; 
-    left: 0; 
+.buttons {
+    display: flex; /* จัดปุ่มในแนวนอน */
+    justify-content: center; /* จัดปุ่มให้อยู่ด้านขวา */
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    z-index: 3;
+    gap: 10px; /* ระยะห่างระหว่างปุ่ม */
+    width: calc(100% - 40px); /* กำหนดความกว้างเต็มที่ลดขอบซ้ายและขวา */
+    color: #3f51b5;
 }
 
-.lessors-information img {
-    width: 100px;        /* ความกว้างของภาพ */
-    height: auto;        /* ให้ความสูงปรับตามสัดส่วน */
-    border: 1px solid #ccc; /* กรอบรอบภาพ */
-    border-radius: 4px;  /* มุมโค้ง */
-    margin-left: 250px;   /* ระยะห่างด้านซ้าย */
+button + button {
+    margin-left: 10px; /* Space between buttons */
+}
+
+.review-section {
+    display: flex;
+    flex-direction: column;
+}
+  
+.review-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+  
+.label {
+    text-align: right;
+    width: 30%;
+    font-weight: bold;
+}
+  
+.value {
+    text-align: left;
+    width: 65%;
+}
+
+.back-btn {
+    color: darkgray
+}
+
+.next-btn {
+    color: #3f51b5;
+}
+
+.submit-btn {
+    color: #4caf50;
 }

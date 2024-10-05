@@ -7,18 +7,12 @@ import { searchCircleOutline } from 'ionicons/icons';
 import { doc, getDoc } from "firebase/firestore";
 import { db , auth } from '../utils/firebase';
 import Lessors_Regis from './Lessors_Regis';
-import StepContext , {multiStepContext} from '../StepContext';
+import StepperForm from './StepperForm';
 
 const Home = () => {
   const [user, setUser] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
-  const { setStep, userData, finalData ,setUserData } = useContext(multiStepContext); // Correctly destructure the context
-  
-  
-  const goToStep = (step) => {
-    setStep(0);
-  };
 
   useEffect(() => {
     const auth = getAuth();
@@ -43,27 +37,13 @@ const Home = () => {
   const handleSearch = () => {
     console.log('Searching for:', searchTerm); // Perform search or navigate to search results
   };
+  
+  const [showStepper, setShowStepper] = useState(false);
 
-  const checkRenterStatus = async () => {
-    const user = auth.currentUser;
-    if (user) {
-      const userEmail = user.email;
-      const docRef = doc(db, "lessors", userEmail); // Replace with your collection and document structure
-      const docSnap = await getDoc(docRef);
-
-      if (docSnap.exists()) {
-        // If the email exists in "ผู้ปล่อยเช่า" collection, navigate to the renting page
-        navigate("/Rental"); // Adjust the route as necessary
-      } else {
-        // If the email does not exist, navigate to the registration page
-        navigate("/Lessors-regis"); // Adjust the route as necessary
-      }
-    } else {
-      // If the user is not authenticated, maybe prompt login or show an error
-      console.error("No authenticated user");
-    }
+  // ฟังก์ชันที่ใช้ในการแสดง/ซ่อน StepperForm เมื่อกดที่ li
+  const handleNavigateToStepper = () => {
+    navigate('/Rental');
   };
-
 
   return (
     <div className='home-page'>
@@ -78,10 +58,11 @@ const Home = () => {
             <ul>
               <li><a href='#' className='active'>Home</a></li>
               <li><a href='#'>About</a></li>
-              <li><a href='#' onClick={checkRenterStatus} >For Rent  </a></li>
+              <li><a href='#' onClick={handleNavigateToStepper} >For Rent  </a></li>
               <li><a href='#'>Contacts</a></li>
             </ul>
           </div>
+          {showStepper && <StepperForm />}
           <div className='search-bar'>
             <input 
               type='text' 
