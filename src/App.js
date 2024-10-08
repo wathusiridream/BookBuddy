@@ -6,6 +6,7 @@ import ForgotPassword from './components/ForgotPassword';
 import UserInformation from './components/UserInformation';
 import Lessors_Dashboard from './components/Lessors_Dashboard';
 import StepperForm from './components/StepperForm';
+import Thai_Address from './components/Thai_Address';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
             <Route path="/home" element={<Home />} />
             <Route path="/Rental" element={<StepperForm />} />
             <Route path="/Lessors-Dashboard" element={<Lessors_Dashboard />} />
+            <Route path='/ThaiAddress' element={<Thai_Address/>} />
           </Routes>
         </Router>
     </div>

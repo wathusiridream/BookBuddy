@@ -41,9 +41,13 @@ const Home = () => {
   const [showStepper, setShowStepper] = useState(false);
 
   // ฟังก์ชันที่ใช้ในการแสดง/ซ่อน StepperForm เมื่อกดที่ li
-  const handleNavigateToStepper = () => {
+  const handleRental = () => {
     navigate('/Rental');
   };
+
+  const handleAddress = () => {
+    navigate('/ThaiAddress')
+  }
 
   return (
     <div className='home-page'>
@@ -57,8 +61,8 @@ const Home = () => {
           <div className='links'>
             <ul>
               <li><a href='#' className='active'>Home</a></li>
-              <li><a href='#'>About</a></li>
-              <li><a href='#' onClick={handleNavigateToStepper} >For Rent  </a></li>
+              <li><a href='#' onClick={handleAddress}>About</a></li>
+              <li><a href='#' onClick={handleRental} >For Rent  </a></li>
               <li><a href='#'>Contacts</a></li>
             </ul>
           </div>

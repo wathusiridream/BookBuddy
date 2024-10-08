@@ -1,5 +1,4 @@
 .lessors-info-page {
-    padding: 5px;
     background-color: #f9f9f9;
 }
 
@@ -30,13 +29,14 @@
 }
   
 .MuiStepLabel-root {
-    color: #3f51b5; /* primary color */
+    color: #3f51b5;
     margin-top: 0px;
     margin-bottom: 0px; 
+    
 }
   
 .MuiStepLabel-active {
-    font-weight: bold; /* make active step bold */
+    font-weight: bold; 
     margin-top: 0px;
     margin-bottom: 0px; 
 }
@@ -58,7 +58,7 @@
     flex-grow: 1; /* ให้ section นี้ขยายได้ */
     overflow-y: auto;
     z-index: 2;
-    width: 50%;
+    width: 70%;
 }
 
 .buttons {
@@ -110,4 +110,70 @@ button + button {
 
 .submit-btn {
     color: #4caf50;
+}
+
+.input-with-icon {
+    display: flex;
+    align-items: center;
+}
+
+.input-with-icon ion-icon {
+    font-size: 30px; /* ปรับขนาดไอคอน */
+    margin-right: 10px; /* ระยะห่างระหว่างไอคอนกับ TextField */
+    display: flex;
+    align-items: center; /* จัดกึ่งกลางไอคอนในแนวตั้ง */
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.input-with-icon .MuiInputLabel-root{
+    position: absolute; 
+    top: 50%; 
+    transform: translateY(-50%); 
+    left: 10px; 
+    transition: all 0.2s ease; 
+}
+
+.input-with-icon .MuiInputLabel-root.MuiInputLabel-shrink {
+    top: -5px; 
+    font-size: 14px; 
+    color: black; 
+    left: 13px;
+}
+
+.input-with-icon .MuiSvgIcon-root {
+    font-size: 30px; /* ปรับขนาดไอคอน */
+    margin-right: 10px; /* ระยะห่างระหว่างไอคอนกับ TextField */
+    display: flex;
+    align-items: center; /* จัดกึ่งกลางไอคอนในแนวตั้ง */
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.input-with-icon img {
+    font-size: 30px; /* ปรับขนาดไอคอน */
+    margin-right: 10px; /* ระยะห่างระหว่างไอคอนกับ TextField */
+    display: flex;
+    align-items: center; /* จัดกึ่งกลางไอคอนในแนวตั้ง */
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.input-with-icon .MuiFormControlLabel-label {
+    display: flex;            /* Use flexbox to align items */
+    align-items: center;     /* Center items vertically */
+    margin-left: 0px;       /* Adjust spacing between the radio button and label */
+}
+
+.input-with-icon .MuiButtonBase-root{
+    align-items: center;
+    top : 30%;
+    transform: translateY(-50%);
+}
+
+.react-datepicker-wrapper {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+    margin-left: 37px;
 }
