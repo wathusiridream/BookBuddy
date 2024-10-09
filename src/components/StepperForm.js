@@ -7,10 +7,12 @@ import { ColorlibConnector, ColorlibStepIcon } from './CustomStepper';
 import '../WebStyle/Lessors_Regis_Form.css';
 import { IonIcon } from '@ionic/react'; // Corrected Ionic icon import
 import { personOutline, callOutline, cardOutline  } from 'ionicons/icons';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import { addYears, isBefore ,subYears} from 'date-fns';
-
+import { addYears ,subYears} from 'date-fns';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from 'dayjs';
 
 const thai = require('thai-data');
 
@@ -43,7 +45,7 @@ const StepperForm = () => {
   const auth = getAuth();
   const [birthDate, setBirthDate] = useState(null);
   const today = new Date();
-  const minDate = addYears(today, -15); // 15 years ago
+  const maxDate = dayjs().subtract(15, 'year'); // 15 ปีจากวันปัจจุบัน
 
 
   const handleNext = () => {
@@ -208,18 +210,12 @@ const StepperForm = () => {
   }
 
   const handleDateChange = (date) => {
-    if (isBefore(date, minDate)) {
-      setBirthDate(date);
+    if (date.isAfter(maxDate)) {
+        alert('คุณที่ต้องมีอายุมากกว่า 15 ปี');
     } else {
-      alert('กรุณากรอกวันเกิด');
+        setBirthDate(date);
     }
-  };
-
-  const isValidDate = (date) => {
-    const today = new Date();
-    const minDate = subYears(today, 15);
-    return date <= minDate;
-  };
+};
 
   const getStepContent = (stepIndex) => {
     switch (stepIndex) {
@@ -280,16 +276,18 @@ const StepperForm = () => {
               />
             </div>
             <div className="input-with-icon">
-                <DatePicker
-                    selected={birthDate}
-                    onChange={handleDateChange}
-                    dateFormat="dd/MM/yyyy"
-                    maxDate={minDate}
-                    showYearDropdown
-                    yearDropdownItemNumber={15} // Show 15 years in dropdown
-                    scrollableYearDropdown
-                    placeholderText="Select your birth date"
-                />
+              <div className='BirthDatePick' >
+                  <LocalizationProvider 
+                      dateAdapter={AdapterDayjs}>
+                      <DatePicker className='DateIcon'
+                          label="Select your birth date"
+                          value={birthDate}
+                          onChange={handleDateChange} // ใช้ handleDateChange ที่ปรับปรุงแล้ว
+                          maxDate={maxDate} // กำหนด maxDate
+                          renderInput={(params) => <TextField {...params} />} // แสดง input
+                      />
+                  </LocalizationProvider>
+              </div>
             </div>
             <div className="input-with-icon">
               <IonIcon icon={callOutline} />

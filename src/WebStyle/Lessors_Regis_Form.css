@@ -171,9 +171,17 @@ button + button {
     transform: translateY(-50%);
 }
 
-.react-datepicker-wrapper {
+.BirthDatePick {
     display: flex;
     align-items: center;
     margin-top: 10px;
     margin-left: 37px;
+}
+
+.BirthDatePick .MuiButtonBase-root.MuiIconButton-root {
+    position: absolute; /* ใช้ absolute positioning */
+    top: 35%; /* ตั้งค่าให้กลาง */
+    transform: translateY(-50%); /* แก้ไขให้มันกลาง */
+    right: 1px; /* ปรับระยะห่างจากขอบขวาของกรอบ */
+    padding: 2px;
 }
