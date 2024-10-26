@@ -76,17 +76,23 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-
+  
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      console.log('Logged in as:', userCredential.user);
-      navigate('/home');
+      const userEmail = userCredential.user.email;
+  
+      // ตรวจสอบว่าอีเมลลงท้ายด้วย '@bookbuddy.com'
+      if (userEmail.endsWith('@bookbuddy.com')) {
+        navigate('/adminHomepage'); // ถ้าใช่จะไปที่หน้า adminHomepage
+      } else {
+        navigate('/home'); // ถ้าไม่ใช่จะไปที่หน้า home
+      }
     } catch (error) {
       console.error('Error logging in:', error);
       setError('Login failed. Please check your credentials.');
     }
   };
-
+  
   // Remember Me functionality
   useEffect(() => {
     const savedEmail = localStorage.getItem('email');

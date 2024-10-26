@@ -21,7 +21,7 @@
 .stepper {
     width: 100%;
     position: relative; /* ปรับตำแหน่งให้เป็น relative */
-    z-index: 1;
+    padding-top: 20px;
 }
 
 .MuiStepper-root {
@@ -115,6 +115,8 @@ button + button {
 .input-with-icon {
     display: flex;
     align-items: center;
+    background-color: white;
+
 }
 
 .input-with-icon ion-icon {
@@ -134,6 +136,12 @@ button + button {
     transition: all 0.2s ease; 
 }
 
+.input-with-icon .MuiInputBase-root , 
+.input-with-icon .MuiOutlinedInput-root  , 
+.input-with-icon .MuiInputBase-input , 
+.input-with-icon .MuiOutlinedInput {
+    background-color: white;
+}
 .input-with-icon .MuiInputLabel-root.MuiInputLabel-shrink {
     top: -5px; 
     font-size: 14px; 
@@ -175,7 +183,6 @@ button + button {
     display: flex;
     align-items: center;
     margin-top: 10px;
-    margin-left: 37px;
 }
 
 .BirthDatePick .MuiButtonBase-root.MuiIconButton-root {
@@ -184,4 +191,87 @@ button + button {
     transform: translateY(-50%); /* แก้ไขให้มันกลาง */
     right: 1px; /* ปรับระยะห่างจากขอบขวาของกรอบ */
     padding: 2px;
+}
+
+.back {
+    position: absolute;
+    top: 10px; /* Adjust as needed to move button away from the top */
+    right: 10px; /* Adjust as needed to move button away from the left */
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    z-index: 1;
+}
+
+.form {
+    padding-top: 30px;
+    max-width: 100%;
+    display: flex; /* Use flexbox for horizontal layout */
+    flex-direction: column; /* ใช้แนวตั้งสำหรับ layout ของ form */
+    background-color: white;
+}
+  
+.form-row {
+    display: flex; /* ใช้ flexbox สำหรับแต่ละแถว */
+    flex-wrap: wrap; /* อนุญาตให้ wrap เมื่อเกินจำนวน */
+    margin-bottom: 16px; /* ช่องว่างระหว่างแถว */
+    background-color: white;
+
+  }
+  
+.form-group {
+    flex: 1 1 calc(20% - 10px); /* 5 items in a row */
+    margin: 5px; /* ช่องว่างระหว่างกลุ่ม */
+    background-color: white;
+  }
+  
+.form-group .MuiFormControl {
+    width: 70px !important; 
+    background-color: white;
+
+  }
+  
+.form-group .MuiSelect-root {
+    width: 100% !important; 
+    background-color: white;
+
+  }
+  
+.form-group input, 
+.form-group select {
+    width: 100%; /* Full width for input and select */
+    border: 1px solid #ccc; /* Border style */
+    border-radius: 4px; /* Rounded corners */
+    font-size: 16px; /* Font size */
+    padding: 8px; /* Padding inside */
+    background-color: white;
+
+  }
+
+.form-group input:disabled {
+    background-color: #d9d9d9;
+  }
+
+.form-group select:disabled {
+    background-color: #d9d9d9; /* Light grey background for disabled state */
+    color: #d9d9d9;
+  }
+
+.form-group .MuiInputLabel-root{
+    position: absolute; 
+    top: 50%; 
+    transform: translateY(-50%); 
+    left: 5px; 
+    transition: all 0.2s ease; 
+}
+
+.form-group  .MuiInputLabel-root.MuiInputLabel-shrink {
+    top: -5px; 
+    font-size: 14px; 
+    color: black; 
+    left: 10px;
 }

@@ -60,10 +60,10 @@ const Home = () => {
       </div>
           <div className='links'>
             <ul>
-              <li><a href='#' className='active'>Home</a></li>
-              <li><a href='#' onClick={handleAddress}>About</a></li>
-              <li><a href='#' onClick={handleRental} >For Rent  </a></li>
-              <li><a href='#'>Contacts</a></li>
+              <li><a href='#' className='active'>หน้าหลัก</a></li>
+              <li><a href='#' >หนังสือทั้งหมด</a></li>
+              <li><a href='#' onClick={handleRental} >ปล่อยเช่า</a></li>
+              <li><a href='#'>เกี่ยวกับเรา</a></li>
             </ul>
           </div>
           {showStepper && <StepperForm />}
