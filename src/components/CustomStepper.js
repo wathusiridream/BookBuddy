@@ -128,10 +128,11 @@ export function ColorlibStepIcon(props) {
 
   const icons = {
     1: <PersonIcon />,
-    2: <HomeIcon/>,
+    2: <HomeIcon />,
     3: <PaidIcon />,
     4: <MenuBookIcon />,
-    5: <CheckCircleIcon/>
+    5: <MenuBookIcon />,
+    6: <CheckCircleIcon />
   };
 
   return (

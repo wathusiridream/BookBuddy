@@ -7,6 +7,9 @@ import UserInformation from './components/UserInformation';
 import Lessors_Dashboard from './components/Lessors_Dashboard';
 import StepperForm from './components/StepperForm';
 import Thai_Address from './components/Thai_Address';
+import Showbook from './components/Showbook';
+import ProfileEdit from './components/ProfileEdit';
+import RentingHistory from './components/RentingHistory';
 
 function App() {
   return (
@@ -20,6 +23,9 @@ function App() {
             <Route path="/Rental" element={<StepperForm />} />
             <Route path="/Lessors-Dashboard" element={<Lessors_Dashboard />} />
             <Route path='/ThaiAddress' element={<Thai_Address/>} />
+            <Route path='/ShowBooks' element={<Showbook/>}/>
+            <Route path='/ProfileEdit' element={<ProfileEdit/>}/>
+            <Route path='/RentingHistory' element={<RentingHistory />} />
           </Routes>
         </Router>
     </div>

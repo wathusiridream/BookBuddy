@@ -14,13 +14,12 @@ import { getStorage } from 'firebase/storage'; // Import Firebase Storage
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyDihiIHIGQPTcCECorBSPw1aHztV546GFE",
-  authDomain: "firstreact-27fdc.firebaseapp.com",
-  databaseURL: "https://firstreact-27fdc-default-rtdb.firebaseio.com",
-  projectId: "firstreact-27fdc",
-  storageBucket: "firstreact-27fdc.appspot.com",
-  messagingSenderId: "729274536913",
-  appId: "1:729274536913:web:8291cd5f3447ca5d7786f0"
+  apiKey: "AIzaSyC1nkqyddcdf8poIgYd7PXB96e5bdKuk1I",
+  authDomain: "rentbook-14471.firebaseapp.com",
+  projectId: "rentbook-14471",
+  storageBucket: "rentbook-14471.appspot.com",
+  messagingSenderId: "1076847253175",
+  appId: "1:1076847253175:web:0ddf60e4321ce841de1f32"
 };
 
 // Initialize Firebase
