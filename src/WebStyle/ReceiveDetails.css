@@ -1,0 +1,25 @@
+/* ตัวอย่าง CSS สำหรับ ReceiveDetails */
+.receive-details-container {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+}
+
+.receive-details-container h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.receive-details-item {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+}
+
+.receive-details-item img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+}

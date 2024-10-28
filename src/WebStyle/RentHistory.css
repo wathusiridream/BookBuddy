@@ -1,0 +1,51 @@
+.rent-history-container {
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  max-width: 600px;
+  margin: auto;
+}
+
+.rental-list {
+  margin-top: 20px;
+}
+
+.rental-item {
+  display: flex;
+  justify-content: space-between; /* จัดแนวให้อยู่ห่างกัน */
+  align-items: center; /* จัดแนวแนวตั้ง */
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+
+.rental-image {
+  width: 100px;
+  height: auto;
+  margin-right: 10px;
+}
+
+.rental-details {
+  flex: 1; /* ทำให้พื้นที่รายละเอียดใช้ได้เต็มที่ */
+}
+
+.button-container {
+  display: flex; /* ใช้ Flexbox เพื่อจัดตำแหน่งปุ่ม */
+  flex-direction: column; /* ปุ่มอยู่ในแนวตั้ง */
+  align-items: flex-end; /* จัดแนวให้อยู่ด้านขวา */
+}
+
+.btn {
+  padding: 5px 10px;
+  margin-top: 5px; /* ระยะห่างระหว่างปุ่ม */
+  background-color: blue;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background-color: darkblue;
+}

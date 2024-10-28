@@ -8,6 +8,9 @@ import { doc, getDoc } from "firebase/firestore";
 import { db , auth } from '../utils/firebase';
 import Lessors_Regis from './Lessors_Regis';
 import StepperForm from './StepperForm';
+import RentalForm from './RentalForm';
+import RentHistory from './RentHistory';
+import QRCodeGenerator from './QRCode';
 
 const Home = () => {
   const [user, setUser] = useState(null);
@@ -46,8 +49,13 @@ const Home = () => {
   };
 
   const handleAddress = () => {
-    navigate('/ThaiAddress')
+    navigate('/rental-form')
   }
+
+  const handleContacts = () => {
+    navigate('/RentHistory');
+  };
+  
 
   return (
     <div className='home-page'>
@@ -63,7 +71,7 @@ const Home = () => {
               <li><a href='#' className='active'>Home</a></li>
               <li><a href='#' onClick={handleAddress}>About</a></li>
               <li><a href='#' onClick={handleRental} >For Rent  </a></li>
-              <li><a href='#'>Contacts</a></li>
+              <li><a href='#' onClick={handleContacts}>Contacts</a></li>
             </ul>
           </div>
           {showStepper && <StepperForm />}
