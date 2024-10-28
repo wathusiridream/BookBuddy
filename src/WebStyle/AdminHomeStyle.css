@@ -1,0 +1,218 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap");
+
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+.adminhome-page {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins" ,sans-serif;
+    font-optical-sizing: auto;
+    height: 100vh; 
+    width: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    width: 100%; 
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    z-index: 1; /* Ensure that the home-page is in front */
+
+}
+
+header {
+    flex: 1; 
+    display: flex;
+    flex-direction: column;
+    height: 100vh; 
+    width: 100%; 
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    justify-items: center;
+    align-items: center;
+    z-index: 2; /* Ensure that header elements are in front */
+
+}
+
+.adminhome-nav {
+    width: 100%;
+    padding: 0.5rem 3rem 0.5rem 5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(0, 0, 0, 0.4); 
+    height: 100px;
+    z-index: 3;
+}
+
+.logo h1 {
+    font-size: 27px;
+    color: #fff;
+}
+
+.logo img {
+    width: 100px; /* Adjust the size as needed */
+    height: auto;
+    cursor: pointer;
+}
+  
+.logo a {
+    display: inline-block;
+}
+
+.links ul {
+    list-style: none;
+    display: flex;
+    gap: 3rem;
+}
+
+.links li a {
+    color: #000;
+    font-size: 18px;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 25px;
+    padding: 10px 15px;
+    transition: background-color 0.6s;
+}
+
+.links li a:hover {
+    background-color: #0F52BA;
+}
+
+.active {
+    background-color: #0F52BA;
+}
+
+.adminhome-content {   
+    height: 90vh; 
+    width: 100%; 
+    position: absolute; 
+
+}
+
+.adminhome-container {
+    align-items: center;
+    text-align: center;
+    max-width: 100%;
+    justify-items: center;
+    justify-content: center;
+}
+
+.adminhome-container h1 {
+    color: #000;
+    font-size: 5rem; 
+    margin-bottom: 10px;
+    
+}
+
+.adminhome-container p {
+    color: #fff;
+    margin-bottom: 20px;
+    align-content: center;
+    justify-content: center;
+    justify-items: center;
+}
+
+#explore {
+    margin-left: 20px;
+}
+
+.adminhome-button {
+    border: 2px solid #E7FAF9;
+    background: transparent;
+    border-radius: 5px;
+    padding: 10px 15px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #E7FAF9;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.adminhome-button:hover {
+    background-color: #E7FAF9;
+    color: #000;
+}
+
+.login-sec {
+    display: flex;
+    align-items: center;
+    gap: 1rem; /* กำหนดระยะห่างระหว่างปุ่มล็อกเอาต์และข้อความผู้ใช้ */
+    color: #fff; /* ตั้งค่าสีข้อความเป็นสีขาว */
+}
+
+.login-sec h1 {
+    font-size: 1.2rem;
+    margin: 0;
+    font-weight: 400; /* ตั้งค่าน้ำหนักของฟอนต์ */
+    color: #E7FAF9; /* สีข้อความผู้ใช้ */
+}
+
+.login-sec img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 5px; /* ระยะห่างระหว่างรูปภาพโปรไฟล์กับข้อความผู้ใช้ */
+}
+
+.login-sec button {
+    padding: 0.5rem 1rem;
+    background-color: transparent;
+    border: 2px solid #E7FAF9;
+    color: #E7FAF9;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.login-sec button:hover {
+    background-color: #E7FAF9;
+    color: #000;
+}
+
+.login-sec .user-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem; /* เพิ่มช่องว่างระหว่างรูปโปรไฟล์และชื่อผู้ใช้ */
+}
+
+.card {
+    background-color: #ffffff; /* สีพื้นหลังของการ์ด */
+    border-radius: 10px; /* มุมโค้ง */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* เงาของการ์ด */
+    text-align: center; /* จัดข้อความกลาง */
+    margin: 10px; /* ระยะห่างระหว่างการ์ด */
+    transition: transform 0.2s; /* เอฟเฟกต์การเคลื่อนไหว */
+    width: 400px;
+    justify-content: center;
+    justify-items: center;
+}
+  
+.card:hover {
+    transform: scale(1.05); /* ขยายการ์ดเมื่อชี้เมาส์ */
+}
+
+.card h2 {
+    width: 300px;
+}
+
+.card-container {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    
+  } 
+  .card img {
+    width: 50%; /* ทำให้ภาพเต็มการ์ด */
+    height: auto; /* รักษาสัดส่วน */
+    border-radius: 10px; /* มุมโค้ง */
+  }
+  

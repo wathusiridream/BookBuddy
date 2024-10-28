@@ -6,7 +6,6 @@
 
 body {
     display: absolute ;
-    background-color: #f6f5f7;
     align-content: center;
     align-items: center;
     justify-items: center;
@@ -30,7 +29,7 @@ h1.title {
     line-height: 45px;
     margin: 0;
     text-shadow: 0 0 10px rgba(16, 64, 74, 0.5);
-    color: #fff;
+    color: #000;
 }
 
 p {
@@ -90,7 +89,7 @@ button {
     border-radius: 20px;
     border: 1px solid #4bb6b7;
     background-color: #4bb6b7;
-    color: #fff;
+    color: #000;
     font-size: 15px;
     font-weight: 700;
     margin: 10px;

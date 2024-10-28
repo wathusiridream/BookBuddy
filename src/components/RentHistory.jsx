@@ -1,0 +1,107 @@
+import React, { useEffect, useState } from 'react';
+import '../WebStyle/RentHistory.css';
+import { db } from './../utils/firebase';
+import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom'; // นำเข้า useNavigate
+
+function RentHistory() {
+  const [rentalHistory, setRentalHistory] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('notReceived'); 
+
+  const navigate = useNavigate(); // สร้างตัวแปร navigate
+
+  useEffect(() => {
+    const fetchRentalHistory = async () => {
+      try {
+        const rentalCollection = collection(db, 'rentals');
+        const rentalSnapshot = await getDocs(rentalCollection);
+        
+        const rentalList = rentalSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+
+        setRentalHistory(rentalList);
+      } catch (error) {
+        console.error('Error fetching rental history:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRentalHistory();
+  }, []);
+
+  const handleReceive = async (rentalId) => {
+    try {
+      const rentalRef = doc(db, 'rentals', rentalId);
+      await updateDoc(rentalRef, { receivedStatus: 'received' });
+
+      // นำทางไปยังหน้า ReceiveDetails
+      navigate(`/receive-details/${rentalId}`);
+    } catch (error) {
+      console.error('Error updating received status:', error);
+      alert('เกิดข้อผิดพลาดในการยืนยันการได้รับของ');
+    }
+  };
+
+  const filterRentals = () => {
+    if (activeTab === 'notReceived') {
+      return rentalHistory.filter((rental) => rental.receivedStatus !== 'received');
+    } else if (activeTab === 'returned') {
+      return rentalHistory.filter((rental) => rental.receivedStatus === 'received' && rental.returnStatus === 'not yet');
+    }
+    return rentalHistory;
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <div className="rent-history-container">
+      <h2>ประวัติการยืม</h2>
+      
+      <div className="tabs">
+        <button onClick={() => setActiveTab('notReceived')} className={activeTab === 'notReceived' ? 'active' : ''}>
+          รายการที่ยังไม่ได้รับ
+        </button>
+        <button onClick={() => setActiveTab('returned')} className={activeTab === 'returned' ? 'active' : ''}>
+          รายการที่คืนแล้ว
+        </button>
+      </div>
+
+      <div className="rental-list">
+        {filterRentals().length > 0 ? (
+          filterRentals().map((rental) => (
+            <div key={rental.id} className="rental-item">
+              <img src={rental.image} alt={rental.productName} className="rental-image" />
+              <div className="rental-details">
+                <h3>{rental.productName}</h3>
+                <p>ชื่อ: {rental.firstName} {rental.lastName}</p>
+                <p>จำนวน: {rental.quantity}</p>
+                <p>ราคาเช่าต่อวัน: {rental.rentalPrice} บาท</p>
+                <p>รวมราคา: {rental.totalAmount} บาท</p>
+                <p>สถานะการชำระเงิน: {rental.paymentStatus}</p>
+                <p>สถานะการได้รับของ: {rental.receivedStatus || 'รอจัดส่ง'}</p>
+                <p>สถานะการคืนของ: {rental.returnStatus || 'รอคืนของ'}</p>
+
+                {rental.receivedStatus !== 'received' && (
+                  <button onClick={() => handleReceive(rental.id)}>ยืนยันการได้รับของ</button>
+                )}
+                {rental.receivedStatus === 'received' && rental.returnStatus !== 'yes' && (
+                  <button onClick={() => navigate(`/return-details/${rental.id}`)}>คืนของ</button>
+                )}
+              </div>
+            </div>
+          ))
+        ) : (
+          <p>ไม่มีข้อมูลที่จะแสดง</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default RentHistory;

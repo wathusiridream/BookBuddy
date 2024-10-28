@@ -1,6 +1,9 @@
 .lessors-info-page {
-    background-color: #f9f9f9;
+    background: linear-gradient(180deg, rgba(67, 179, 174, 1) 0%, rgba(67, 179, 174, 0.76) 21%, rgba(245, 245, 220, 0.48) 76%, rgba(255, 255, 255, 0) 100%);
+    min-height: 100vh; /* ความสูงอย่างน้อย 100% ของ viewport */
+    width: 100vw;
 }
+
 
 .container {
     max-width: 600px;
@@ -59,6 +62,9 @@
     overflow-y: auto;
     z-index: 2;
     width: 70%;
+    justify-content: center;
+
+    
 }
 
 .buttons {
@@ -142,6 +148,7 @@ button + button {
 .input-with-icon .MuiOutlinedInput {
     background-color: white;
 }
+
 .input-with-icon .MuiInputLabel-root.MuiInputLabel-shrink {
     top: -5px; 
     font-size: 14px; 
@@ -274,4 +281,49 @@ button + button {
     font-size: 14px; 
     color: black; 
     left: 10px;
+}
+
+.flash-message {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.flash-message.info {
+    background-color: #e0f7fa; /* สีพื้นหลังสำหรับข้อมูล */
+    color: #00796b; /* สีข้อความ */
+}
+
+.flash-message.success {
+    background-color: #c8e6c9; /* สีพื้นหลังสำหรับสำเร็จ */
+    color: #388e3c; /* สีข้อความ */
+}
+
+.flash-message.error {
+    background-color: #ffcdd2; /* สีพื้นหลังสำหรับล้มเหลว */
+    color: #d32f2f; /* สีข้อความ */
+}
+
+.detailcard {
+    width: 70%;
+    max-width: 100%; /* กำหนดขนาด Card ให้อยู่ในขอบเขต */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    background-color: #fff;
+    margin-bottom: 20px;
+    transform: translateX(20%);
+
+}
+  
+.review-item {
+    display: flex;
+    justify-content: space-between; /* จัด label และ value ให้อยู่คนละด้าน */
+    margin-bottom: 10px;
+}
+  
+.preview-image {
+    max-width: 200px;
+    margin-top: 8px;
+    border-radius: 4px;
 }

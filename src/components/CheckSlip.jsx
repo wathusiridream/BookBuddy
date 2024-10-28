@@ -1,0 +1,83 @@
+import React, { useState, useEffect } from 'react';
+import '../WebStyle/CheckSlip.css';
+import { db } from './../utils/firebase'; // Import Firestore
+import { doc, updateDoc } from 'firebase/firestore'; // Import Firestore functions
+import { useLocation } from 'react-router-dom'; // Import useLocation
+
+function CheckSlip() {
+  const location = useLocation();
+  const { amount, rentalId } = location.state || {}; // ดึงค่า amount และ rentalId
+  console.log(rentalId)
+
+  const [files, setFiles] = useState(null);
+  const [slipOkData, setSlipOkData] = useState(null);
+  const [message, setMessage] = useState('');
+  const [paymentStatus, setPaymentStatus] = useState('not paid');
+
+  // ... โค้ดอื่นๆ
+  const handleFileChange = (e) => {
+    setFiles(e.target.files[0]);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!files) {
+      setMessage('กรุณาอัปโหลดไฟล์ก่อนส่งข้อมูล');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("files", files);
+
+    try {
+      const res = await fetch("https://api.slipok.com/api/line/apikey/31011", {
+        method: "POST",
+        headers: {
+          "x-authorization": "SLIPOK64TXGV0"
+        },
+        body: formData
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setSlipOkData(data.data);
+        setMessage('อัปโหลดสลิปสำเร็จ!');
+
+        // Update payment status based on response data
+        if (data.data?.success === true) {
+          setPaymentStatus('paid');
+          const rentalRef = doc(db, 'rentals', rentalId); // ใช้ rentalId ที่ดึงมาจาก location.state
+          console.log(rentalId)
+          await updateDoc(rentalRef, { paymentStatus: 'paid' });
+        } else {
+          setPaymentStatus('not paid');
+        }
+      } else {
+        throw new Error("การส่งคำขอล้มเหลว");
+      }
+    } catch (error) {
+      setMessage('เกิดข้อผิดพลาดระหว่างการอัปโหลดสลิป');
+    }
+  };
+
+  return (
+    <div className="checkslip-container">
+      <h2>ตรวจสอบการชำระเงิน</h2>
+      <form onSubmit={handleSubmit}>
+        <input type="file" onChange={handleFileChange} />
+        <button type="submit">ส่งสลิป</button>
+      </form>
+      {message && <p>{message}</p>}
+      <p>สถานะการชำระเงิน: {paymentStatus}</p>
+      {slipOkData && (
+        <div>
+          <h3>ข้อมูลสลิป</h3>
+          <pre>{JSON.stringify(slipOkData, null, 2)}</pre>
+        </div>
+      )}
+      <p>จำนวนเงินที่ต้องชำระ: {amount} บาท</p> {/* แสดงจำนวนเงินที่ต้องชำระ */}
+    </div>
+  );
+}
+
+export default CheckSlip;

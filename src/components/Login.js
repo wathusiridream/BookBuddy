@@ -208,8 +208,8 @@ const handleFacebookLogin = async () => {
       <div className="form-container register-container">
             <form onSubmit={handleRegister}>
                 <img
-                    src="https://media.discordapp.net/attachments/1060267174301814936/1285888701972611122/image.png?ex=66ed3a2d&is=66ebe8ad&hm=3a3b9afa7f55bd144f1dc2ad765c9b392d8d1fb5d69a25091a11e7415db1a01f&=&format=webp&quality=lossless&width=656&height=662"
-                    style={{ width: '100px', height: '100px' }}
+                  src = "logobook.png"
+                  style={{ width: '200px', height: 'auto' }}
                 />
                 <h1>Register Here</h1>
 
@@ -317,8 +317,8 @@ const handleFacebookLogin = async () => {
         <div className="form-container login-container">
           <form onSubmit={handleSubmit}>
             <img
-              src="https://media.discordapp.net/attachments/1060267174301814936/1285888701972611122/image.png?ex=66ed3a2d&is=66ebe8ad&hm=3a3b9afa7f55bd144f1dc2ad765c9b392d8d1fb5d69a25091a11e7415db1a01f&=&format=webp&quality=lossless&width=656&height=662"
-              style={{ width: '100px', height: '100px' }}
+              src = "logobook.png"              
+              style={{ width: '200px', height: 'auto' }}
               alt="Login"
             />
             <h1>Login Here</h1>

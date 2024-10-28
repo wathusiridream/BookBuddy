@@ -1,13 +1,14 @@
-import React, { useEffect, useState ,useContext} from 'react';
-import { getAuth, reload, signOut } from 'firebase/auth';
+import React, { useEffect, useState } from 'react';
+import { getAuth, signOut } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
-import '../WebStyle/Homestyle.css'; // Import the CSS file
+import '../WebStyle/Homestyle.css';
 import { IonIcon } from '@ionic/react';
 import { searchCircleOutline } from 'ionicons/icons';
-import { doc, getDoc } from "firebase/firestore";
-import { db , auth } from '../utils/firebase';
-import Lessors_Regis from './Lessors_Regis';
-import StepperForm from './StepperForm';
+import { db } from '../utils/firebase';
+import ForRentForm from './ForRentForm';
+import RentalForm from './RentalForm';
+import RentHistory from './RentHistory';
+import QRCodeGenerator from './QRCode';
 
 const Home = () => {
   const [user, setUser] = useState(null);
@@ -18,100 +19,101 @@ const Home = () => {
     const auth = getAuth();
     const currentUser = auth.currentUser;
 
-    if (currentUser) {
-      setUser(currentUser);
+    // Redirect to login if not logged in
+    if (!currentUser) {
+      navigate('/'); // Redirect to the login page
+      return;
+    }
+
+    // Set the current user
+    setUser(currentUser);
+
+    // Redirect based on the user email domain
+    if (currentUser.email.endsWith('@bookbuddy.com')) {
+      navigate('/adminHomepage'); // Redirect to adminHomepage
     } else {
-      navigate('/'); // Redirect to SignIn if not logged in
+      navigate('/home'); // Redirect to the regular home page
     }
   }, [navigate]);
 
   const handleLogout = async () => {
     try {
       await signOut(getAuth());
-      navigate('/'); // Redirect to SignIn page
+      navigate('/'); // Redirect to the login page
     } catch (error) {
       console.error('Error signing out:', error);
     }
   };
 
   const handleSearch = () => {
-    console.log('Searching for:', searchTerm); // Perform search or navigate to search results
-  };
-  
-  const [showStepper, setShowStepper] = useState(false);
-
-  // ฟังก์ชันที่ใช้ในการแสดง/ซ่อน StepperForm เมื่อกดที่ li
-  const handleRental = () => {
-    navigate('/Rental');
+    console.log('Searching for:', searchTerm);
   };
 
-  const handleAddress = () => {
-    navigate('/ThaiAddress')
-  }
+  const handleForRent = () => {
+    navigate('/ForRent');
+  };
+
+  const handleSeeAllBooks = () => {
+    navigate('/ShowBooks');
+  };
+
+  const handleProfileEdit = () => {
+    navigate('/ProfileEdit');
+  };
+
+  const headerStyle = {
+    fontFamily: "'Sarabun', sans-serif"
+  };
 
   return (
     <div className='home-page'>
       <header>
         <nav className='home-nav'>
-        <div className='logo'>
-        <a href='#' onClick={() => window.location.reload()}>
-          <img src={require('../WebStyle/logobook.png')} alt="Logo" />
-        </a>
-      </div>
+          <div className='logo'>
+            <a href='#' onClick={() => window.location.reload()}>
+              <img src={require('../WebStyle/logobook.png')} alt="Logo" />
+            </a>
+          </div>
           <div className='links'>
             <ul>
-              <li><a href='#' className='active'>หน้าหลัก</a></li>
-              <li><a href='#' >หนังสือทั้งหมด</a></li>
-              <li><a href='#' onClick={handleRental} >ปล่อยเช่า</a></li>
-              <li><a href='#'>เกี่ยวกับเรา</a></li>
+              <li style={{color : 'black'}}><a href='#' >หน้าหลัก</a></li>
+              <li style={{color : 'black'}}><a href='#' onClick={handleSeeAllBooks}>หนังสือทั้งหมด</a></li>
+              <li style={{color : 'black'}}><a href='#' onClick={handleForRent}>ปล่อยเช่า</a></li>
+              <li style={{color : 'black'}}><a href='#'>เกี่ยวกับเรา</a></li>
             </ul>
           </div>
-          {showStepper && <StepperForm />}
-          <div className='search-bar'>
-            <input 
-              type='text' 
-              placeholder='Search for books...' 
-              value={searchTerm} 
-              onChange={(e) => setSearchTerm(e.target.value)} 
-            />
-            <IonIcon
-              icon={searchCircleOutline}
-              onClick={handleSearch}
-              style={{
-                cursor: 'pointer',
-                position: 'absolute',
-                right: '15px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                color: '#888',
-                fontSize: '24px'
-              }}
-            />
-          </div>  
           <div className='login-sec'>
             {user ? (
               <div className='user-info'>
-                {user.photoURL && <img src={user.photoURL} alt="User Profile" />}
-                <h1>{user.displayName || user.email}</h1>
-                <button onClick={handleLogout} className='home-button'>Log Out</button>
+                {user.photoURL && (
+                  <img
+                    src={user.photoURL}
+                    alt="User Profile"
+                    onClick={handleProfileEdit}
+                    style={{ cursor: 'pointer' }}
+                  />
+                )}
+                <h1 style={{ color: 'black' }}>{user.displayName || user.email}</h1>
+                <button onClick={handleLogout} style={{ 
+                      border: '2px solid #F36825', 
+                      background: '#F36825' , // เปลี่ยนพื้นหลังเมื่อ hover
+                      borderRadius: '15px', 
+                      color:  'white' // เปลี่ยนสีข้อความเมื่อ hover
+                    }}>Log Out
+                </button>
               </div>
             ) : (
-              <button className='home-button'>Login</button>
+              <button onClick={() => navigate('/')} className='home-button'>Login</button>
             )}
           </div>
         </nav>
 
         <div className='home-content'>
           <div className='home-container'>
-            <h1>Welcome to BookBuddy!</h1>
+            <h1>ยินดีต้อนรับสู่ BookBuddy!</h1>
             <h2>Your Ultimate Book Rental Community</h2>
-            {/*<p>
-              At BookBuddy, we believe that every book has a story to tell, 
-              and every story deserves to be shared. 
-              Whether you're looking to rent your favorite reads or lend your cherished books to fellow book lovers, we’ve got you covered.
-            </p>*/}
-            <button id="Rent-now" className='home-button'>Rent Now</button>
-            <button id="See All Books" className='home-button'>See All Books</button>
+            <button id="Rent-now" className='home-button' onClick={handleForRent}>ปล่อยเช่าหนังสือ</button>
+            <button id="See All Books" className='home-button' onClick={handleSeeAllBooks}>หนังสือทั้งหมด</button>
           </div>
         </div>
       </header>

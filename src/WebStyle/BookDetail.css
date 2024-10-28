@@ -1,0 +1,39 @@
+.book-detail-container {
+    padding: 20px;
+}
+
+.book-title {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.book-slider {
+    position: relative;
+}
+
+.cover-image {
+    width: 100%;
+    height: auto;
+}
+
+.sample-images {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 10px;
+}
+
+.sample-image {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+}
+
+.loading-message {
+    text-align: center;
+    font-size: 20px;
+}
+
+.no-data-message {
+    text-align: center;
+    color: red;
+}

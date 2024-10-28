@@ -6,24 +6,14 @@ body, html {
     height: 100%;
 }
 
-.home-page {
+.navbarhome-page {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: "Poppins" ,sans-serif;
     font-optical-sizing: auto;
-    height: 100vh; 
-    width: 100%;
-   /* background-image: url('https://img.freepik.com/free-vector/women-library-reading-searching-books_33099-1732.jpg?t=st=1726922831~exp=1726926431~hmac=9a58ce83f983c83b05b01d58212287d9a7b4120b3cf1cae43188a2ec99fd548b&w=1380');
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: cover;*/
-    width: 100%; 
-    position: absolute; 
     top: 0; 
     left: 0; 
-    z-index: 1; /* Ensure that the home-page is in front */
-
 }
 
 header {
@@ -37,11 +27,10 @@ header {
     left: 0; 
     justify-items: center;
     align-items: center;
-    z-index: 2; /* Ensure that header elements are in front */
-
+    z-index: 2;
 }
 
-.home-nav {
+.navbarhome-nav {
     width: 100%;
     padding: 0.5rem 3rem 0.5rem 5rem;
     display: flex;
@@ -70,7 +59,6 @@ header {
     list-style: none;
     display: flex;
     gap: 3rem;
-    color: #000;
 }
 
 .links li a {
@@ -84,14 +72,14 @@ header {
 }
 
 .links li a:hover {
-    background-color: #43b3ae;
+    background-color: #0F52BA;
 }
 
 .active {
     background-color: #0F52BA;
 }
 
-.home-content {
+.navbarhome-content {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -106,7 +94,7 @@ header {
     padding: 2rem 5rem 2rem 5rem;
 }
 
-.home-container {
+.navbarhome-container {
     align-items: center;
     text-align: center;
     max-width: 600px;
@@ -114,15 +102,15 @@ header {
     justify-content: center;
 }
 
-.home-container h1 {
-    color: #000;
+.navbarhome-container h1 {
+    color: #fff;
     font-size: 5rem; 
     margin-bottom: 10px;
     
 }
 
-.home-container p {
-    color: #000;
+.navbarhome-container p {
+    color: #fff;
     margin-bottom: 20px;
     align-content: center;
     justify-content: center;
@@ -133,37 +121,35 @@ header {
     margin-left: 20px;
 }
 
-.home-button {
-    border: 2px solid #F36825 ;
+.navbarhome-button {
+    border: 2px solid #E7FAF9;
     background: transparent;
-    border-radius:  15px;
+    border-radius: 5px;
     padding: 10px 15px;
     font-size: 20px;
     font-weight: 600;
-    color: #000;
+    color: #E7FAF9;
     cursor: pointer;
     transition: background-color 0.3s, color 0.3s;
 }
 
-.home-button:hover {
-    background-color: #F36825;
+.navbarhome-button:hover {
+    background-color: #E7FAF9;
     color: #000;
 }
 
 .login-sec {
     display: flex;
     align-items: center;
-    gap: 1rem; /* Space between logout button and user text */
-    padding: 1rem; /* Add padding for spacing */
-    color: #000;
-    border-radius: 5px; /* Optional: to give it a rounded appearance */
+    gap: 1rem; /* กำหนดระยะห่างระหว่างปุ่มล็อกเอาต์และข้อความผู้ใช้ */
+    color: #fff; /* ตั้งค่าสีข้อความเป็นสีขาว */
 }
 
 .login-sec h1 {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     margin: 0;
-    font-weight: 400; /* Font weight */
-    color: #000;
+    font-weight: 400; /* ตั้งค่าน้ำหนักของฟอนต์ */
+    color: #E7FAF9; /* สีข้อความผู้ใช้ */
 }
 
 .login-sec img {
@@ -171,28 +157,28 @@ header {
     height: 40px;
     border-radius: 50%;
     object-fit: cover;
-    margin-right: 5px; /* Space between profile picture and user text */
+    margin-right: 5px; /* ระยะห่างระหว่างรูปภาพโปรไฟล์กับข้อความผู้ใช้ */
 }
 
 .login-sec button {
     padding: 0.5rem 1rem;
-    background-color: transparent; /* Button background */
-    border: 2px solid #F36825; /* Button border color */
-    color: #000; /* Button text color */
-    border-radius: 5px; /* Button border radius */
-    cursor: pointer; /* Change cursor on hover */
-    transition: background-color 0.3s, color 0.3s; /* Transition effects */
+    background-color: transparent;
+    border: 2px solid #E7FAF9;
+    color: #E7FAF9;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
 }
 
 .login-sec button:hover {
-    background-color: #F36825; /* Background color on hover */
-    color: #000; /* Text color on hover */
+    background-color: #E7FAF9;
+    color: #000;
 }
 
-.user-info {
+.login-sec .user-info {
     display: flex;
     align-items: center;
-    gap: 1rem; /* Space between profile picture and username */
+    gap: 1rem; /* เพิ่มช่องว่างระหว่างรูปโปรไฟล์และชื่อผู้ใช้ */
 }
 
 .search-bar {
@@ -210,7 +196,7 @@ header {
     border: 2px solid #E7FAF9;
     border-radius: 50px;
     background-color: transparent;
-    color: #000;
+    color: #fff;
     font-size: 16px;
     transition: border-color 0.3s;
     outline: none;
@@ -231,7 +217,7 @@ header {
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
-    color: #000;
+    color: #ffffff;
     font-size: 24px;
     z-index: 2; /* Ensure icon is above the input */
 }
