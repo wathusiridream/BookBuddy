@@ -2,13 +2,15 @@ import React, { useState, useEffect } from 'react';
 import '../WebStyle/CheckSlip.css';
 import { db } from './../utils/firebase'; // Import Firestore
 import { doc, updateDoc } from 'firebase/firestore'; // Import Firestore functions
-import { useLocation } from 'react-router-dom'; // Import useLocation
+import { useLocation , useNavigate } from 'react-router-dom'; // Import useLocation
+import NavBar from './NavBar';
+import { arrowBack } from 'ionicons/icons';
+import { IonIcon } from '@ionic/react';
 
 function CheckSlip() {
   const location = useLocation();
   const { amount, rentalId } = location.state || {}; // ดึงค่า amount และ rentalId
-  console.log(rentalId)
-
+  const navigate = useNavigate();
   const [files, setFiles] = useState(null);
   const [slipOkData, setSlipOkData] = useState(null);
   const [message, setMessage] = useState('');
@@ -59,23 +61,39 @@ function CheckSlip() {
       setMessage('เกิดข้อผิดพลาดระหว่างการอัปโหลดสลิป');
     }
   };
-
+  const handleBackButtonClick = () => {
+    navigate('/');
+};
   return (
-    <div className="checkslip-container">
-      <h2>ตรวจสอบการชำระเงิน</h2>
-      <form onSubmit={handleSubmit}>
-        <input type="file" onChange={handleFileChange} />
-        <button type="submit">ส่งสลิป</button>
-      </form>
-      {message && <p>{message}</p>}
-      <p>สถานะการชำระเงิน: {paymentStatus}</p>
-      {slipOkData && (
-        <div>
-          <h3>ข้อมูลสลิป</h3>
-          <pre>{JSON.stringify(slipOkData, null, 2)}</pre>
-        </div>
-      )}
-      <p>จำนวนเงินที่ต้องชำระ: {amount} บาท</p> {/* แสดงจำนวนเงินที่ต้องชำระ */}
+    <div>
+      <NavBar/>
+      <IonIcon 
+          icon={arrowBack}  
+          onClick={handleBackButtonClick}
+          className="backtoshowbook"
+          aria-label='ย้อนกลับ'
+      /> 
+      <span 
+          className="back-text" 
+          onClick={handleBackButtonClick}
+          >ย้อนกลับ
+      </span>
+      <div className="checkslip-container">
+          <h2>ตรวจสอบการชำระเงิน</h2>
+          <form onSubmit={handleSubmit}>
+            <input type="file" onChange={handleFileChange} />
+            <button type="submit">ส่งสลิป</button>
+          </form>
+          {message && <p>{message}</p>}
+          <p>สถานะการชำระเงิน: {paymentStatus}</p>
+          {slipOkData && (
+            <div>
+              <h3>ข้อมูลสลิป</h3>
+              <pre>{JSON.stringify(slipOkData, null, 2)}</pre>
+            </div>
+          )}
+          <p>จำนวนเงินที่ต้องชำระ: {amount} บาท</p> {/* แสดงจำนวนเงินที่ต้องชำระ */}
+      </div>
     </div>
   );
 }

@@ -6,6 +6,7 @@ import { doc, getDoc, updateDoc, collection, query, where, getDocs, setDoc } fro
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'; // Import Firebase Storage functions
 import '../WebStyle/ProfileEdit.css';
 import { storage } from '../utils/firebase'; // ให้แน่ใจว่าที่อยู่ถูกต้อง
+import NavBar from './NavBar';
 
 const ProfileEdit = () => {
     const [user, setUser] = useState(null);
@@ -17,8 +18,6 @@ const ProfileEdit = () => {
     const [newPhotoFile, setNewPhotoFile] = useState(null); // Declare state for new photo file
 
     const navigate = useNavigate();
-
-    
 
     useEffect(() => {
         const auth = getAuth();
@@ -44,9 +43,6 @@ const ProfileEdit = () => {
             navigate('/');
         }
     }, [navigate]);
-
-
-
 
     const fetchRentalData = async (uid) => {
         try {
@@ -138,10 +134,6 @@ const ProfileEdit = () => {
         }
     };
 
-
-
-
-
     // Function to handle photo upload
     const handlePhotoUpload = async () => {
         if (newPhotoFile) {
@@ -156,9 +148,6 @@ const ProfileEdit = () => {
         }
     };
 
-
-
-
     const handlePhotoChange = (e) => {
         const file = e.target.files[0];
         setNewPhotoFile(file); // เก็บไฟล์รูปภาพใหม่ไว้ใน state
@@ -170,75 +159,77 @@ const ProfileEdit = () => {
         reader.readAsDataURL(file);
     };
 
-
     const handleViewRentingHistory = () => {
         navigate('/RentingHistory'); // Navigate to the RentingHistory page
     };
 
     return (
-        <div className='profile-edit-page'>
-            <h1>Edit Profile</h1>
-            <div className='profile-edit-form'>
-                <div className='form-group'>
-                    <label htmlFor='displayName'>Display Name:</label>
-                    <input
-                        type='text'
-                        id='displayName'
-                        value={displayName}
-                        onChange={(e) => setDisplayName(e.target.value)}
-                    />
-                </div>
-                <div className='form-group'>
-                    <label htmlFor='email'>Email:</label>
-                    <input
-                        type='email'
-                        id='email'
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        disabled
-                    />
-                </div>
-                <div className='form-group'>
-                    <label htmlFor='telephone'>Telephone:</label>
-                    <input
-                        type='text'
-                        id='telephone'
-                        value={telephone}
-                        onChange={(e) => setTelephone(e.target.value)}
-                    />
-                </div>
-                <div className='form-group'>
-                    <label htmlFor='thaiID'>Thai ID:</label>
-                    <input
-                        type='text'
-                        id='thaiID'
-                        value={thaiID}
-                        onChange={(e) => setThaiID(e.target.value)}
-                        disabled
-                    />
-                </div>
-                <div className='form-group'>
-                    <label htmlFor='photo'>Profile Photo:</label>
-                    <input
-                        type='file'
-                        id='photo'
-                        accept='image/*'
-                        onChange={(e) => setNewPhotoFile(e.target.files[0])}
-                    />
-                    {photoURL && (
-                        <div>
-                            <img src={photoURL} alt="Profile"  />
-                        </div>
-                    )}
-                    
+        <div>
+            <NavBar/>
+            <div className='profile-edit-page'>
+                <h1>Edit Profile</h1>
+                <div className='profile-edit-form'>
+                    <div className='form-group'>
+                        <label htmlFor='displayName'>Display Name:</label>
+                        <input
+                            type='text'
+                            id='displayName'
+                            value={displayName}
+                            onChange={(e) => setDisplayName(e.target.value)}
+                        />
+                    </div>
+                    <div className='form-group'>
+                        <label htmlFor='email'>Email:</label>
+                        <input
+                            type='email'
+                            id='email'
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            disabled
+                        />
+                    </div>
+                    <div className='form-group'>
+                        <label htmlFor='telephone'>Telephone:</label>
+                        <input
+                            type='text'
+                            id='telephone'
+                            value={telephone}
+                            onChange={(e) => setTelephone(e.target.value)}
+                        />
+                    </div>
+                    <div className='form-group'>
+                        <label htmlFor='thaiID'>Thai ID:</label>
+                        <input
+                            type='text'
+                            id='thaiID'
+                            value={thaiID}
+                            onChange={(e) => setThaiID(e.target.value)}
+                            disabled
+                        />
+                    </div>
+                    <div className='form-group'>
+                        <label htmlFor='photo'>Profile Photo:</label>
+                        <input
+                            type='file'
+                            id='photo'
+                            accept='image/*'
+                            onChange={(e) => setNewPhotoFile(e.target.files[0])}
+                        />
+                        {photoURL && (
+                            <div>
+                                <img src={photoURL} alt="Profile"  />
+                            </div>
+                        )}
+                        
 
-                </div>
+                    </div>
 
-                <button className='save-button' onClick={handleSave}>Save Changes</button>
-                {/* Add the button to view renting history */}
-                <button className='view-renting-history-button' onClick={handleViewRentingHistory}>
-                    ดูประวัติการปล่อยเช่าหนังสือ
-                </button>
+                    <button className='save-button' onClick={handleSave}>Save Changes</button>
+                    {/* Add the button to view renting history */}
+                    <button className='view-renting-history-button' onClick={handleViewRentingHistory}>
+                        ดูประวัติการปล่อยเช่าหนังสือ
+                    </button>
+                </div>
             </div>
         </div>
     );

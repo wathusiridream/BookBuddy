@@ -16,7 +16,7 @@
     margin: 5px;
     border: none;
     border-radius: 5px;
-    background-color: #007bff;
+    background-color: #43b3ae;
     color: white;
     font-size: 16px;
     cursor: pointer;
@@ -24,7 +24,7 @@
 }
 
 .genre-button:hover {
-    background-color: #0056b3;
+    background-color: #43b3ae;
 }
 
 /* Styles for the book list */
@@ -60,7 +60,7 @@
 }
 
 /* Styles for book details */
-.book-title {
+.showbook-title {
     margin: 0 0 10px 0;
     font-size: 22px; /* Adjust font size for title */
 }

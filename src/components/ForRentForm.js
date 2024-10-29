@@ -853,6 +853,7 @@ const ForRentForm = () => {
 
   return (
     <div className="lessors-info-page"> 
+      <NavBar/>
         <div className="container">
             <Stepper className="stepper" activeStep={activeStep} alternativeLabel connector={<ColorlibConnector />}>
                 {steps.map((label, index) => (

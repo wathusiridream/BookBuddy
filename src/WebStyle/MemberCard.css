@@ -1,0 +1,43 @@
+/* src/components/MemberCard.css */
+.member-card {
+    width: 300px;
+    margin: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.3s;
+}
+
+.member-card:hover {
+    transform: scale(1.05);
+}
+
+.card-content {
+    padding: 15px;
+    background: #fff;
+}
+
+.card-content img {
+    max-width: 100%;
+    height: auto;
+}
+
+.card-back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.member-card:hover .card-back {
+    opacity: 1;
+}

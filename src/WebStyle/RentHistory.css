@@ -1,9 +1,7 @@
 .rent-history-container {
-  padding: 20px;
   border: 1px solid #ccc;
   border-radius: 10px;
-  max-width: 600px;
-  margin: auto;
+  max-width: 100aw;
 }
 
 .rental-list {

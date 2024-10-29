@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import '../WebStyle/RentalForm.css'; // Import CSS file
 import { TextField, FormControl, Select, MenuItem , Card , CardContent , Typography } from '@mui/material';
 import { IonIcon } from '@ionic/react';
-import { personOutline, callOutline } from 'ionicons/icons';
+import { personOutline, callOutline , arrowBack } from 'ionicons/icons';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'; 
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs from 'dayjs';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import { db } from './../utils/firebase'; // Import Firestore
-import { addDoc, collection, updateDoc, doc, getDoc } from 'firebase/firestore'; // Import necessary Firestore functions
+import { addDoc, collection, updateDoc, doc, getDoc , query , where , getDocs} from 'firebase/firestore'; // Import necessary Firestore functions
 import { getAuth } from 'firebase/auth'; // Import getAuth
 import { useNavigate, useParams } from 'react-router-dom';
 import NavBar from './NavBar';
@@ -25,14 +25,12 @@ function RentalForm() {
     lastName: '',
     phone: '',
     rentalDate: dayjs(),
-    returnDate: dayjs().add(1, 'day'),
-    deliveryMethod: '',
+    returnDate: dayjs(),
   });
   const [userId, setUserId] = useState(null); // State for the user ID
   const [book, setBook] = useState(null); // State for book details
   const [errorMessage, setErrorMessage] = useState('');
   const [days, setDays] = useState(1);
-  const [quantity, setQuantity] = useState(1);
   const shippingCost =  40 ;
 
   const today = dayjs();
@@ -58,8 +56,33 @@ function RentalForm() {
     fetchBook();
   }, [id]);
 
+  useEffect(() => {
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
+    if (currentUser) {
+      setUserId(currentUser.uid); // Set the user ID
+
+      // Fetch user information from Firestore based on current user's email
+      const fetchUserInfo = async () => {
+        const userQuery = query(collection(db, 'UserInformation'), where('email', '==', currentUser.email));
+        const userSnapshot = await getDocs(userQuery);
+        if (!userSnapshot.empty) {
+          const userData = userSnapshot.docs[0].data(); // Get the first matching user
+          setFormData((prev) => ({
+            ...prev,
+            firstName: userData.firstname || '',
+            lastName: userData.lastName || '',
+            phone: userData.telephone || '',
+          }));
+        }
+      };
+
+      fetchUserInfo();
+    }
+  }
+  )
   const calculateTotalRental = () => {
-    return (book?.pricePerDay || 0) * days * quantity; // Use book price per day
+    return (book?.pricePerDay || 0) * days ; // Use book price per day
   };
 
   const calculateInsurance = () => {
@@ -82,9 +105,7 @@ function RentalForm() {
       phone: formData.phone,
       rentalDate: formData.rentalDate.toISOString(),
       returnDate: formData.returnDate.toISOString(),
-      deliveryMethod: formData.deliveryMethod,
       totalAmount: calculateFinalTotal(),
-      quantity: quantity,
       days: days,
       nameRented: book?.bookName, // Use the book name from Firestore
       paymentStatus: 'not paid',
@@ -96,7 +117,7 @@ function RentalForm() {
       const docRef = await addDoc(collection(db, 'rentals'), rentalData);
       await updateDoc(docRef, { rentalId: docRef.id });
   
-      alert(`ฟอร์มถูกส่งเรียบร้อยแล้ว\nระยะเวลาที่เช่า: ${days} วัน\nวิธีการรับสินค้า: ${formData.deliveryMethod}\nค่าจัดส่ง: ${shippingCost} บาท\nจำนวนสุทธิขั้นสุด: ${calculateFinalTotal()} บาท`);
+      alert(`ฟอร์มถูกส่งเรียบร้อยแล้ว\nระยะเวลาที่เช่า: ${days} วัน\nค่าจัดส่ง: ${shippingCost} บาท\nค่าเช่าสุทธิ: ${calculateFinalTotal()} บาท`);
   
       // Navigate to the QRCode component and pass the rentalId
       navigate('/QRCode', { state: { amount: calculateFinalTotal(), rentalId: docRef.id, bookId: id } }); // Pass the bookId to the QRCode component
@@ -122,14 +143,29 @@ function RentalForm() {
   if (!book) {
     return <p className="loading-message">กำลังโหลดข้อมูลหนังสือ...</p>;
   }
-
+  
+  const handleBackButtonClick = () => {
+    navigate(`/BooksDetail/${book.id}`);
+};
   return (
-    <div className="rentcontainer">
+    <div style={{backgroundColor : 'white'}}>
       <NavBar/>
-      <h2>แบบฟอร์มการเช่าสินค้า</h2>
+      <IonIcon 
+                icon={arrowBack}  
+                onClick={handleBackButtonClick}
+                className="backtoshowbook"
+                aria-label='ย้อนกลับ'
+            /> 
+            <span 
+                className="back-text" 
+                onClick={handleBackButtonClick}
+                >ย้อนกลับ
+            </span>
+
+      <h2 className="detailbook-title">แบบฟอร์มการเช่าหนังสือ</h2>
       <div className="rental-container">
         <div className="image-section">
-          <h1>{book.bookName}</h1>
+          <h1>ชื่อหนังสือ : {book.bookName}</h1>
           <img src={book.coverbookimg} alt="Selected Product" className="product-image-large" />
           <Card className="info-card" variant="outlined">
             <CardContent>
@@ -159,6 +195,8 @@ function RentalForm() {
         <div className="form-section">
           <form onSubmit={handleSubmit} className="rental-form">
             <div className="input-with-icon">
+              <h3>รายละเอียดการเช่า</h3>
+              
               <IonIcon icon={personOutline} />
               <TextField 
                 label="ชื่อจริง" 
@@ -168,6 +206,7 @@ function RentalForm() {
                 margin="normal" 
                 variant="outlined" 
                 fullWidth
+                disabled
               />
             </div>
             <div className="input-with-icon">
@@ -180,6 +219,7 @@ function RentalForm() {
                 margin="normal" 
                 variant="outlined" 
                 fullWidth
+                disabled
               />
             </div>
             <div className="input-with-icon">
@@ -194,6 +234,7 @@ function RentalForm() {
                 margin="normal" 
                 variant="outlined" 
                 fullWidth
+                disabled
               />
             </div>
 
@@ -218,23 +259,6 @@ function RentalForm() {
                 fullWidth
               />
             </LocalizationProvider>
-
-            {/*<FormControl fullWidth margin="normal">
-              <Select
-                value={formData.deliveryMethod}
-                onChange={handleChange}
-                displayEmpty
-                name="deliveryMethod"
-                fullWidth
-              >
-                <MenuItem value="" disabled>
-                  เลือกวิธีการรับสินค้า
-                </MenuItem>
-                <MenuItem value="นัดรับ">นัดรับ</MenuItem>
-                <MenuItem value="ส่งทางไปรษณีย์">ส่งทางไปรษณีย์</MenuItem>
-              </Select>
-            </FormControl>*/}
-
             {errorMessage && <p className="error-message">{errorMessage}</p>}
               <Typography>ระยะเวลาที่เช่า: {days} วัน</Typography>
             <p>ค่าเช่า: {calculateTotalRental()} บาท</p>

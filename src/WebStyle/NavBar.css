@@ -141,8 +141,7 @@ header {
 .login-sec {
     display: flex;
     align-items: center;
-    gap: 1rem; /* กำหนดระยะห่างระหว่างปุ่มล็อกเอาต์และข้อความผู้ใช้ */
-    color: #fff; /* ตั้งค่าสีข้อความเป็นสีขาว */
+    gap: 1rem; 
 }
 
 .login-sec h1 {

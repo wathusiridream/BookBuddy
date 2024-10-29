@@ -9,6 +9,7 @@ import ForRentForm from './ForRentForm';
 import RentalForm from './RentalForm';
 import RentHistory from './RentHistory';
 import QRCodeGenerator from './QRCode';
+import DropDownProfile from './DropDownProfile';
 
 const Home = () => {
   const [user, setUser] = useState(null);
@@ -60,12 +61,13 @@ const Home = () => {
   const handleProfileEdit = () => {
     navigate('/ProfileEdit');
   };
-
-  const headerStyle = {
-    fontFamily: "'Sarabun', sans-serif"
+  
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const handleProfileClick = () => {
+    setShowProfileMenu(!showProfileMenu);
   };
 
-  return (
+return (
     <div className='home-page'>
       <header>
         <nav className='home-nav'>
@@ -89,17 +91,18 @@ const Home = () => {
                   <img
                     src={user.photoURL}
                     alt="User Profile"
-                    onClick={handleProfileEdit}
+                    onClick={handleProfileClick}
                     style={{ cursor: 'pointer' }}
                   />
                 )}
+                {showProfileMenu && <DropDownProfile />}
                 <h1 style={{ color: 'black' }}>{user.displayName || user.email}</h1>
                 <button onClick={handleLogout} style={{ 
                       border: '2px solid #F36825', 
-                      background: '#F36825' , // เปลี่ยนพื้นหลังเมื่อ hover
+                      background: '#F36825' , 
                       borderRadius: '15px', 
-                      color:  'white' // เปลี่ยนสีข้อความเมื่อ hover
-                    }}>Log Out
+                      color:  'white' 
+                    }}>ออกจากระบบ
                 </button>
               </div>
             ) : (

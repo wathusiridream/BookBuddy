@@ -1,39 +1,107 @@
 .book-detail-container {
-    padding: 20px;
+    display: flex; /* ใช้ flexbox สำหรับการจัดการเลย์เอาต์ */
+    justify-content: center; /* จัดกลางในแนวนอน */
+    align-items: center; /* จัดกลางในแนวตั้ง */
+    max-width: 800px; /* กำหนดความกว้างสูงสุด */
+    margin: 0 auto; /* จัดกลางในหน้า */
 }
 
-.book-title {
-    font-size: 24px;
-    font-weight: bold;
+.detailbook-title {
+    font-size: 2rem; /* ขนาดตัวอักษรของชื่อหนังสือ */
+    text-align: center; /* จัดกลางชื่อหนังสือ */
+    margin: 0;
 }
 
-.book-slider {
-    position: relative;
+
+.thumbnail-section {
+    display: flex; /* ใช้ flexbox สำหรับการจัดการเลย์เอาต์ */
+    margin-top: 10px; /* ระยะห่างด้านบน */
+    justify-content: center; /* จัดกลางในแนวนอน */
+
 }
 
-.cover-image {
-    width: 100%;
+.thumbnail {
+    width: 80px; /* กำหนดความกว้างของ thumbnail */
+    height: auto; /* กำหนดความสูงของ thumbnail */
+    margin: 0 5px; /* ระยะห่างซ้ายขวา */
+    cursor: pointer; /* แสดงมือเมื่อชี้ไปที่ thumbnail */
+    border-radius: 5px; /* มุมโค้ง */
+    transition: transform 0.2s; /* เพิ่มการเปลี่ยนแปลง */
+}
+
+.thumbnail:hover {
+    transform: scale(1.1); /* ขยายเมื่อชี้ */
+}
+
+.thumbnail.selected {
+    border: 2px solid rgba(67, 179, 174, 1); /* ขอบเมื่อเลือก thumbnail */
+}
+
+.rent-button {
+    padding: 10px 20px; /* เพิ่ม padding รอบๆ ปุ่ม */
+    font-size: 1rem; /* ขนาดตัวอักษรของปุ่ม */
+    background-color: rgba(67, 179, 174, 1); /* สีพื้นหลังของปุ่ม */
+    color: white; /* สีตัวอักษรของปุ่ม */
+    border: none; /* ไม่มีขอบ */
+    border-radius: 5px; /* มุมโค้งของปุ่ม */
+    cursor: pointer; /* แสดงมือเมื่อชี้ไปที่ปุ่ม */
+    transition: background-color 0.2s; /* เพิ่มการเปลี่ยนแปลง */
+}
+
+.image-section {
+    flex-direction: column;
+    flex: 1; /* กำหนดให้ใช้พื้นที่ที่เหลือ */
+    margin-right: 5rem; /* เพิ่มระยะห่างระหว่างภาพและข้อความ */
+    width: 300px;
     height: auto;
+
 }
 
-.sample-images {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 10px;
+.image {
+    width: 650px; /* กำหนดให้ภาพขยายเต็มความกว้าง */
+    max-width: 500px; /* กำหนดความกว้างสูงสุด */
+    border-radius: 10px; /* มุมโค้งของภาพ */
 }
 
-.sample-image {
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
+.text-section {
+    flex: 2; /* กำหนดให้ข้อความใช้พื้นที่ที่มากกว่า */
+    text-align: left; /* จัดข้อความไปทางซ้าย */
+    font-size: 18px;
+    margin: 0;
 }
 
-.loading-message {
-    text-align: center;
-    font-size: 20px;
+.text-section p {
+    margin: 10px;
+}
+.backtoshowbook {
+    margin-top: 1rem;
+    margin-left: 3rem;
+    cursor: pointer; /* เปลี่ยนเคอร์เซอร์เมื่อวางเมาส์ */
+    font-size: 24px; /* ขนาดของไอคอน */
+    color: #000; /* สีของไอคอน */
+    margin-bottom: 10px; /* ระยะห่างด้านล่าง */
+    transition: color 0.3s ease; /* เอฟเฟกต์การเปลี่ยนสี */
 }
 
-.no-data-message {
-    text-align: center;
-    color: red;
+.backtoshowbook:hover {
+    color: #007bff; /* เปลี่ยนสีเมื่อวางเมาส์ */
+}
+
+.book-detail-container {
+    display: flex; /* ใช้ flexbox สำหรับจัดแนว */
+    justify-content: space-between; /* จัดให้ทั้งสองฝั่ง */
+    align-items: center; /* จัดกลางในแนวตั้ง */
+}
+
+.back-text {
+    margin-left: 8px; /* ระยะห่างด้านซ้ายจากไอคอน */
+    font-size: 16px; /* ขนาดตัวอักษร */
+    color: #000; /* สีข้อความ */
+    cursor: pointer; /* เปลี่ยนเคอร์เซอร์เมื่อวางเมาส์ */
+    transition: color 0.3s ease; /* เอฟเฟกต์การเปลี่ยนสี */
+    margin-top: -10;
+}
+
+.back-text:hover {
+    color: #007bff; /* เปลี่ยนสีเมื่อวางเมาส์ */
 }

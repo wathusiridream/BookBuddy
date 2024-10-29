@@ -1,35 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import '../WebStyle/RentHistory.css';
-import { db } from './../utils/firebase';
-import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth'; // Import Firebase Auth
 import { useNavigate } from 'react-router-dom';
-import NavBar from './NavBar';
-
-function RentHistory() {
+import { collection, getDocs, doc, updateDoc } from 'firebase/firestore'; // Ensure these are correctly imported
+import { db } from '../utils/firebase';
+import NavBar from './NavBar'; // Import your NavBar component
+import AdminNavBar from './AdminNavBar';
+function AllRentalHistory() {
   const [rentalHistory, setRentalHistory] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('notReceived'); 
+  const [activeTab, setActiveTab] = useState('notReceived');
 
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // Create navigate variable
 
-  // Get current user ID
-  const auth = getAuth();
-  const currentUserId = auth.currentUser ? auth.currentUser.uid : null;
-  console.log(currentUserId)
   useEffect(() => {
     const fetchRentalHistory = async () => {
       try {
         const rentalCollection = collection(db, 'rentals');
         const rentalSnapshot = await getDocs(rentalCollection);
-        
-        const rentalList = rentalSnapshot.docs
-          .map(doc => ({
-            id: doc.id,
-            ...doc.data()
-          }))
-          // Filter rentals to only include those for the current user
-          .filter(rental => rental.userId === currentUserId);
+
+        const rentalList = rentalSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
 
         setRentalHistory(rentalList);
       } catch (error) {
@@ -40,13 +31,14 @@ function RentHistory() {
     };
 
     fetchRentalHistory();
-  }, [currentUserId]); // Add currentUserId as a dependency
+  }, []);
 
   const handleReceive = async (rentalId) => {
     try {
       const rentalRef = doc(db, 'rentals', rentalId);
       await updateDoc(rentalRef, { receivedStatus: 'received' });
 
+      // Navigate to ReceiveDetails page
       navigate(`/receive-details/${rentalId}`);
     } catch (error) {
       console.error('Error updating received status:', error);
@@ -69,10 +61,10 @@ function RentHistory() {
 
   return (
     <div>
-      <NavBar/>
+      <AdminNavBar />
       <div className="rent-history-container">
-        <h2>ประวัติการเช่าของฉัน</h2>
-        
+        <h2>ประวัติการเช่าทั้งหมดในระบบ</h2>
+
         <div className="tabs">
           <button onClick={() => setActiveTab('notReceived')} className={activeTab === 'notReceived' ? 'active' : ''}>
             รายการที่ยังไม่ได้รับ
@@ -96,13 +88,7 @@ function RentHistory() {
                   <p>สถานะการชำระเงิน: {rental.paymentStatus}</p>
                   <p>สถานะการได้รับของ: {rental.receivedStatus || 'รอจัดส่ง'}</p>
                   <p>สถานะการคืนของ: {rental.returnStatus || 'รอคืนของ'}</p>
-
-                  {rental.receivedStatus !== 'received' && (
-                    <button onClick={() => handleReceive(rental.id)}>ยืนยันการได้รับของ</button>
-                  )}
-                  {rental.receivedStatus === 'received' && rental.returnStatus !== 'yes' && (
-                    <button onClick={() => navigate(`/return-details/${rental.id}`)}>คืนของ</button>
-                  )}
+                  <button onClick={() => handleReceive(rental.id)}>ยืนยันการได้รับ</button>
                 </div>
               </div>
             ))
@@ -115,4 +101,4 @@ function RentHistory() {
   );
 }
 
-export default RentHistory;
+export default AllRentalHistory;

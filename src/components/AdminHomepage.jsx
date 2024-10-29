@@ -39,16 +39,15 @@ function AdminHomepage() {
 
   return (
     <div className='adminhome-page'>
-      <AdminNavBar/>
+      <AdminNavBar />
       <div className='adminhome-content'>
         <div className='adminhome-container' style={gradientStyle}>
           <div className="card-container">
             <div className="card">
               <img src="6111095.jpg" alt="สมาชิก" />
               <h2>ข้อมูลสมาชิกในระบบ</h2>
-
             </div>
-            <div className="card">
+            <div className="card" onClick={() => navigate('/AllRental')}>
               <img src="rentallist.jpg" alt="รายการเช่า" />
               <h2>รายการการเช่าทั้งหมด</h2>
             </div>

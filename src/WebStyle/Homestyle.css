@@ -235,4 +235,45 @@ header {
     font-size: 24px;
     z-index: 2; /* Ensure icon is above the input */
 }
-  
+
+.dropdowmProfile {
+    position: absolute;
+    top: -8.7rem;
+    right: 26rem;
+    width: 200px;
+    border-radius: 8px;
+    background-color: white;
+    border: 1px solid gray;
+    color: #000;
+    margin-top: 15rem;
+    z-index: 1;
+
+}
+
+.dropdowmProfile::before{
+    content: '';
+    position: absolute;
+    top: -0.7rem;
+    right: 1.1rem;
+    width: 20px;
+    height: 20px;
+    transform: rotate(45deg);
+    background-color: white;
+    border-left: 1px solid gray;
+    border-top: 1px solid gray;
+}
+
+.dropdowmProfile ul{
+    list-style: none;
+    cursor: pointer;
+
+}
+
+.dropdowmProfile li a {
+    color: #000;
+    font-size: 20px;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 25px;
+    transition: background-color 0.6s;    
+}

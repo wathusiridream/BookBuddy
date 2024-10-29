@@ -8,7 +8,7 @@ import ForRentForm from './components/ForRentForm';
 import AdminHomepage from './components/AdminHomepage';
 import Showbook from './components/Showbooks';
 import ProfileEdit from './components/ProfileEdit';
-import RentingHistory from './components/RentingHistory';
+import RentingHistory from './components/ForRentHistory';
 import RentalForm from './components/RentalForm';
 import CheckSlip from './components/CheckSlip';
 import RentHistory from './components/RentHistory';
@@ -16,6 +16,10 @@ import QRCodeGenerator from './components/QRCode';
 import ReceiveDetails from './components/ReceiveDetails'; 
 import ReturnDetails from './components/ReturnDetails';
 import BookDetail from './components/BookDetail';
+import ForRentHistory from './components/ForRentHistory';
+import UserInformationForm from './components/UserInformation';
+import AllRentalHistory from './components/AllRentalHistory';
+import AllMemBers from './components/AllMemBers';
 
 function App() {
   return (
@@ -38,7 +42,11 @@ function App() {
             <Route path="/receive-details/:rentalId" element={<ReceiveDetails />} />
             <Route path="/return-details/:rentalId" element={<ReturnDetails />} />
             <Route path="/BooksDetail/:id" element={<BookDetail />} />
-            </Routes>
+            <Route path="/ForRentHistory" element={<ForRentHistory />} />            
+            <Route path="/UserInformationForm/:id" element={<UserInformationForm/>}/>
+            <Route path="/AllRental" element={<AllRentalHistory/>}/>
+            <Route path="/AllMembers" element={<AllMemBers/>}/>
+          </Routes>
         </Router>
     </div>
 

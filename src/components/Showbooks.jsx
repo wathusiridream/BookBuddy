@@ -4,7 +4,7 @@ import { collection, getDocs } from 'firebase/firestore';
 import NavBar from './NavBar';
 import '../WebStyle/Showbook.css';
 import { IonIcon } from '@ionic/react';
-import { searchCircleOutline } from 'ionicons/icons';
+import { searchCircleOutline , arrowBack} from 'ionicons/icons';
 import { useNavigate } from 'react-router-dom';
 
 const Showbook = () => {
@@ -33,9 +33,25 @@ const Showbook = () => {
 
     const genres = [...new Set(books.map(book => book.genre))];
 
+    const handleBackButtonClick = () => {
+        navigate('/ShowBooks'); // ใช้ -1 เพื่อย้อนกลับไปยังหน้าก่อนหน้า
+    };
+
+
     return (
         <div className="book-list-container">
             <NavBar /> {/* Insert NavBar here */}
+            <IonIcon 
+                icon={arrowBack}  
+                onClick={handleBackButtonClick}
+                className="backtoshowbook"
+                aria-label='ย้อนกลับ'
+            /> 
+            <span 
+                className="back-text" 
+                onClick={handleBackButtonClick}
+                >ย้อนกลับ
+            </span>
             <h1 className="book-list-title">หนังสือที่สามารถเช่าได้</h1>
             <div className="search-bar">
                 <input
@@ -85,11 +101,11 @@ const Showbook = () => {
                                         <img className="book-cover-image" src={book.coverbookimg} alt="Cover" />
                                     </div>
                                 )}
-                                <h2 className="book-title">{book.bookName}</h2>
+                                <h2 className="showbook-title">{book.bookName}</h2>
                                 <p className="book-detail">ประเภท: {book.genre}</p>
                                 <p className="book-detail">ISBN: {book.isbn}</p>
                                 <p className="book-detail">ผู้แต่ง: {book.author}</p>
-                                <p className="book-detail">ราคา/วัน: {book.pricePerDay}</p>
+                                <p className="book-detail">ราคาเช่า: {book.pricePerDay} บาท / วัน</p>
                             </div>
                         ))
                     ) : (

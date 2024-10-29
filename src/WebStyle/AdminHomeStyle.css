@@ -194,6 +194,7 @@ header {
     width: 400px;
     justify-content: center;
     justify-items: center;
+    z-index: 1;
 }
   
 .card:hover {

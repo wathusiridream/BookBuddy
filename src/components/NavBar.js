@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { getAuth, signOut } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import '../WebStyle/NavBar.css'; 
+import DropDownProfile from './DropDownProfile';
 
 export default function NavBar() {
     const navigate = useNavigate();
@@ -43,12 +44,17 @@ export default function NavBar() {
         navigate('/')
     }
 
+    const [showProfileMenu, setShowProfileMenu] = useState(false);
+    const handleProfileClick = () => {
+      setShowProfileMenu(!showProfileMenu);
+    };
+
 return (
         <div className='navbarhome-page'>      
                 <nav className='navbarhome-nav'>
                     <div className='logo'>
                         <a href='#' onClick={() => window.location.reload()}>
-                            <img src='logobook.png' alt="Logo" />
+                        <img src={require('../WebStyle/logobook.png')} alt="Logo" />
                         </a>
                     </div>
                     <div className='links'>
@@ -66,12 +72,19 @@ return (
                             <img
                                 src={user.photoURL}
                                 alt="User Profile"
-                                onClick={handleProfileEdit}
+                                onClick={handleProfileClick}
                                 style={{ cursor: 'pointer' }}
                             />
                             )}
-                            <h1>{user.displayName || user.email}</h1>
-                            <button onClick={handleLogout} className='navbarhome-button'>Log Out</button>
+                            {showProfileMenu && <DropDownProfile />}
+                            <h1 style={{ color: 'black' }}>{user.displayName || user.email}</h1>
+                            <button onClick={handleLogout} style={{ 
+                                border: '2px solid #F36825', 
+                                background: '#F36825' , 
+                                borderRadius: '15px', 
+                                color:  'white' 
+                                }}>ออกจากระบบ
+                            </button>
                         </div>
                         ) : (
                         <button onClick={() => navigate('/')} className='navbarhome-button'>Login</button>

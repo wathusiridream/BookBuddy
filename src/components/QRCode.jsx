@@ -3,6 +3,10 @@ import { QRCodeCanvas } from 'qrcode.react';
 import { useLocation, useNavigate } from 'react-router-dom'; // Import useNavigate
 import { db } from './../utils/firebase';
 import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
+import NavBar from './NavBar';
+import { arrowBack } from 'ionicons/icons';
+import { IonIcon } from '@ionic/react';
+
 const generatePayload = require('promptpay-qr');
 
 function QRCode() {
@@ -83,23 +87,33 @@ function QRCode() {
     navigate('/CheckSlip', { state: { amount, rentalId } }); 
   }
 
+  const handleBackButtonClick = () => {
+    navigate('/home');
+};
+
   return (
-    <div className="container">
-      <div className="card">
-        <h1>โอนเงิน</h1>
-        <h2>จำนวนเงิน: {amount} บาท</h2>
-        {lessorName && <h3>ผู้ปล่อยเช่า: {lessorName}</h3>} {/* Display lessor's name */}
+    <div style={{backgroundColor : 'white'}}>
+      <NavBar/>
+      <IonIcon 
+                icon={arrowBack}  
+                onClick={handleBackButtonClick}
+                className="backtoshowbook"
+                aria-label='ย้อนกลับ'
+            /> 
+            <span 
+                className="back-text" 
+                onClick={handleBackButtonClick}
+                >ย้อนกลับ
+            </span>
+      <div  style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', padding: '20px'}}>
+        <h1>ชำระเงิน</h1>
+        <h2>จำนวนเงิน : {amount} บาท</h2>
+        {lessorName && <h3>ผู้ปล่อยเช่า : {lessorName}</h3>} {/* Display lessor's name */}
         
-        <input
-          type="text"
-          value={phoneNumber}
-          onChange={(e) => setPhoneNumber(e.target.value)} // Update phoneNumber on input change
-          placeholder="หมายเลขพร้อมเพย์"
-          readOnly
-        />
+        
         {qrCode && (
           <div className="timer">
-            <p>กรุณาโอนภายใน {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')} นาที</p>
+            <p>กรุณาชำระภายใน {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')} นาที</p>
           </div>
         )}
         {qrCode && (
@@ -109,8 +123,16 @@ function QRCode() {
             </div>
           </div>
         )}
+        {<input
+          type="text"
+          value={phoneNumber}
+          onChange={(e) => setPhoneNumber(e.target.value)} // Update phoneNumber on input change
+          placeholder="หมายเลขพร้อมเพย์"
+          disabled
+          style={{ height: '0px' , backgroundColor : 'white' , color : 'white' ,  }} 
+        />}
         <button onClick={handleConfirm} className="confirm-button">
-          ตกลง
+          ชำระแล้ว
         </button>
       </div>
     </div>
