@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect} from 'react';
 import '../WebStyle/CheckSlip.css';
 import { db, storage } from './../utils/firebase'; // Import Firestore and Storage
 import { doc, updateDoc, getDoc } from 'firebase/firestore'; // Import Firestore functions
@@ -10,12 +10,16 @@ import { IonIcon } from '@ionic/react';
 
 function CheckSlip() {
   const location = useLocation();
-  const { amount, rentalId } = location.state || {}; // ดึงค่า amount และ rentalId
+  const { amount, rentalId , promptpayNumber} = location.state || {}; // ดึงค่า amount และ rentalId
+
+
   const navigate = useNavigate();
   const [files, setFiles] = useState(null);
   const [slipOkData, setSlipOkData] = useState(null);
   const [message, setMessage] = useState('');
   const [paymentStatus, setPaymentStatus] = useState('not paid');
+
+  
 
   const handleFileChange = (e) => {
     setFiles(e.target.files[0]);
@@ -48,10 +52,10 @@ function CheckSlip() {
   
       if (res.ok) {
         const data = await res.json();
-        console.log("API Response Data:", data); // ตรวจสอบ API Response ทั้งหมด
-        
+        console.log("API Response Data:", data);
+  
         setSlipOkData(data.data);
-        setMessage('อัปโหลดสลิปสำเร็จ!');
+        setMessage('กำลังตรวจสอบลสิป โปรดรอสักครู่');
   
         if (data.data?.success === true) {
           const rentalRef = doc(db, 'rentals', rentalId);
@@ -59,19 +63,36 @@ function CheckSlip() {
           const totalAmount = rentalSnap.data()?.totalAmount;
   
           const apiAmount = data.data?.amount;
-          const apiTelephone = data.data?.receiver.proxy.value; // ตรวจสอบว่า field นี้มีอยู่จริงไหม
+          const apiTelephone = data.data?.receiver.proxy.value;
   
           console.log(`API Amount: ${apiAmount}, API Telephone: ${apiTelephone}`);
-  
+          const apiLastFour = apiTelephone.slice(-4); // ใช้ slice เพื่อดึง 4 ตัวสุดท้าย
+          const promptpayLastFour = promptpayNumber.split('-').pop(); // ใช้ split เพื่อดึงหมายเลขหลัง '-'
+          console.log(`API Last Four: ${apiLastFour}, Firestore Last Four: ${promptpayLastFour}`);
+        
           // ดึงค่า promptpayNumber จาก Firestore
           const bookRef = doc(db, 'ForRents', rentalId);
           const bookSnap = await getDoc(bookRef);
-          const promptpayNumber = bookSnap.data()?.promptpayNumber;
-  
-          console.log(`Firestore PromptPay Number: ${promptpayNumber}`);
+          const promptpayNum = promptpayNumber;
+          console.log(`Firestore PromptPay Number: ${promptpayNum}`);
   
           // ตรวจสอบจำนวนเงินและหมายเลข PromptPay
-          if (apiAmount === totalAmount && apiTelephone === promptpayNumber) {
+          if (apiAmount !== totalAmount) {
+            await updateDoc(rentalRef, {
+              paymentStatus: 'not paid',
+              CheckSlip: false
+            });
+            setPaymentStatus('not paid');
+            setMessage('จำนวนเงินไม่ตรงกัน กรุณาตรวจสอบสลิป');
+
+          } else if (apiLastFour !== promptpayLastFour) {
+            await updateDoc(rentalRef, {
+              paymentStatus: 'not paid',
+              CheckSlip: false
+            });
+            setPaymentStatus('not paid');
+            setMessage('หมายเลข PromptPay ไม่ตรงกัน กรุณาตรวจสอบสลิป');
+          } else {
             await updateDoc(rentalRef, {
               paymentStatus: 'paid',
               slippaylessorUrl: fileURL,
@@ -79,13 +100,6 @@ function CheckSlip() {
             });
             setPaymentStatus('paid');
             setMessage('ชำระเงินเรียบร้อยแล้ว!');
-          } else {
-            await updateDoc(rentalRef, {
-              paymentStatus: 'not paid',
-              CheckSlip: false
-            });
-            setPaymentStatus('not paid');
-            setMessage('จำนวนเงินไม่ตรงกัน หรือหมายเลข PromptPay ไม่ตรงกัน กรุณาตรวจสอบ');
           }
         } else {
           setPaymentStatus('not paid');
@@ -99,10 +113,6 @@ function CheckSlip() {
     }
   };
   
-  
-  
-  
-
   const handleBackButtonClick = () => {
     navigate('/');
   };

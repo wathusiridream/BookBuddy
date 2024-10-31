@@ -21,8 +21,8 @@ import UserInformationForm from './components/UserInformation';
 import AllRentalHistory from './components/AllRentalHistory';
 import AllMemBers from './components/AllMemBers';
 import AdminQRCode from './components/AdminQRCode';
-import AdminQRCodeDetails from './components/AdminQRCodeDetail';
-
+import AdminRentaltoPay from './components/AdminRentaltoPay';
+import AdminCheckSlip from './components/AdminCheckSlip';
 function App() {
   return (
     <div className="App">
@@ -49,7 +49,8 @@ function App() {
             <Route path="/AllRental" element={<AllRentalHistory/>}/>
             <Route path="/AllMembers" element={<AllMemBers/>}/>
             <Route path='/AdminQRCode' element={<AdminQRCode/>}/>
-            <Route path='/AdminQRCodeDetails' element={<AdminQRCodeDetails/>}/>
+            <Route path='/AdminRentaltoPay' element={<AdminRentaltoPay/>}/>
+            <Route path='/AdminCheckSlip' element={<AdminCheckSlip/>}/>
           </Routes>
         </Router>
     </div>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import '../WebStyle/RentHistory.css';
 import { db } from './../utils/firebase';
-import { collection, onSnapshot, doc, updateDoc } from 'firebase/firestore';
+import { collection, onSnapshot, doc, getDoc, updateDoc  , where} from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import NavBar from './NavBar';
 import { ToastContainer, toast } from 'react-toastify';
@@ -14,46 +14,75 @@ function RentHistory() {
 
   const auth = getAuth();
   const currentUserId = auth.currentUser ? auth.currentUser.uid : null;
-
+  
   useEffect(() => {
     const rentalCollection = collection(db, 'rentals');
 
-    // ใช้ onSnapshot เพื่อฟังการเปลี่ยนแปลงในฐานข้อมูล
-    const unsubscribe = onSnapshot(rentalCollection, (snapshot) => {
-      const rentalList = snapshot.docs
-        .map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }))
-        .filter(rental => rental.userId === currentUserId);
+    const unsubscribe = onSnapshot(rentalCollection, async (snapshot) => {
+      const rentalList = await Promise.all(
+        snapshot.docs.map(async (doc) => {
+          const rentalData = { id: doc.id, ...doc.data() };
+          return rentalData;
+        })
+      );
 
-      setRentalHistory(rentalList);
+      // ฟิลเตอร์การเช่าที่เป็นของผู้ใช้ปัจจุบัน
+      const userRentals = rentalList.filter((rental) => rental.userId === currentUserId);
+      
+      // เก็บ bookIds
+      const bookIds = userRentals.map((rental) => rental.bookId).filter(Boolean);
+
+      // ดึงข้อมูลจาก ForRents
+      const booksData = await Promise.all(
+        bookIds.map(async (bookId) => {
+          const bookDocRef = doc(db, 'ForRents', bookId);
+          const bookDoc = await getDoc(bookDocRef);
+          if (bookDoc.exists()) {
+            return { id: bookDoc.id, ...bookDoc.data() };
+          } else {
+            return { id: bookId, bookName: 'ไม่พบชื่อหนังสือ' };
+          }
+        })
+      );
+
+      // สร้างอาเรย์ใหม่ที่มีข้อมูลการเช่าพร้อมชื่อหนังสือ
+      const rentalHistoryWithBooks = userRentals.map((rental) => {
+        const bookData = booksData.find(book => book.id === rental.bookId);
+        return {
+          ...rental,
+          bookName: bookData ? bookData.bookName : 'ไม่มีข้อมูล'
+        };
+      });
+
+      setRentalHistory(rentalHistoryWithBooks);
       setLoading(false);
     }, (error) => {
       console.error('Error fetching rental history:', error);
       setLoading(false);
     });
 
-    // คืนค่าฟังก์ชันสำหรับยกเลิกการฟังเมื่อคอมโพเนนต์ถูก unmounted
     return () => unsubscribe();
   }, [currentUserId]);
+
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   const handleReceive = async (rental) => {
     try {
       const rentalRef = doc(db, 'rentals', rental.id);
       const currentDate = new Date();
       const returnDate = new Date(currentDate);
-      returnDate.setDate(returnDate.getDate() + rental.days); // บวกจำนวนวันที่เช่า
+      returnDate.setDate(returnDate.getDate() + rental.days);
 
       await updateDoc(rentalRef, {
         renter_received: true,
-        date_return: returnDate.toISOString().split('T')[0], // เก็บเป็นรูปแบบ YYYY-MM-DD
+        date_return: returnDate.toISOString().split('T')[0],
       });
 
-      // แสดงป๊อปอัพด้วย toast
       toast.success(`คุณจะต้องคืนหนังสือภายในวันที่: ${returnDate.toISOString().split('T')[0]}`);
 
-      // อัปเดต rentalHistory ในสถานะ
       setRentalHistory((prevRentals) =>
         prevRentals.map((rentalItem) =>
           rentalItem.id === rental.id ? { ...rentalItem, renter_received: true, date_return: returnDate.toISOString().split('T')[0] } : rentalItem
@@ -70,7 +99,6 @@ function RentHistory() {
       const rentalRef = doc(db, 'rentals', rentalId);
       await updateDoc(rentalRef, { renter_returned: true });
 
-      // อัปเดต rentalHistory ในสถานะ
       setRentalHistory((prevRentals) =>
         prevRentals.map((rental) =>
           rental.id === rentalId ? { ...rental, renter_returned: true } : rental
@@ -128,12 +156,10 @@ function RentHistory() {
                 <p>สถานะ: {rental.status || 'รอการจัดการ'}</p>
                 <p>สถานะการชำระเงิน: {rental.paymentStatus}</p>
 
-                {/* แสดงปุ่มยืนยันการได้รับของเมื่อ lessor_shipped เป็น true */}
                 {activeTab === 'notReceived' && rental.lessor_shipped && !rental.renter_received && (
                   <button onClick={() => handleReceive(rental)}>ยืนยันการได้รับของ</button>
                 )}
 
-                {/* แสดงปุ่มคืนหนังสือในรายการกำลังเช่า */}
                 {activeTab === 'inProgress' && rental.renter_received && !rental.renter_returned && (
                   <button onClick={() => handleReturn(rental.id)}>คืนหนังสือแล้ว</button>
                 )}
@@ -144,9 +170,8 @@ function RentHistory() {
           )}
         </div>
 
-        {/* ToastContainer สำหรับแสดงป๊อปอัพ */}
         <ToastContainer
-          position="top-center" // ตำแหน่งอยู่ซ้ายบน
+          position="top-center"
           autoClose={5000}
           hideProgressBar={false}
           closeOnClick

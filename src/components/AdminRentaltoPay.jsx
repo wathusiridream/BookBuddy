@@ -5,10 +5,10 @@ import { useNavigate } from 'react-router-dom';
 import AdminNavBar from './AdminNavBar';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { db } from './../utils/firebase'; // นำเข้า db ที่นี่
+import { db } from '../utils/firebase'; // นำเข้า db ที่นี่
 import '../WebStyle/RentHistory.css';
 
-function AdminQRCodeDetails() {
+function AdminRentaltoPay() {
   const [rentalHistory, setRentalHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('pending'); // สถานะเริ่มต้น
@@ -57,6 +57,7 @@ function AdminQRCodeDetails() {
         adminName,
       });
       navigate('/AdminQRCode', { state: { rentalId: rental.id, amount: rental.totalAmount } });
+
     } catch (error) {
       console.error('Error adding document to adminpay:', error);
     }
@@ -90,26 +91,31 @@ function AdminQRCodeDetails() {
 
         <div className="rental-list">
           {filterRentals().length > 0 ? (
-            filterRentals().map((rental) => (
-              <div key={rental.id} className="rental-item">
-                <h2>ชื่อหนังสือ: {rental.bookName}</h2>
-                <p>ผู้เช่า: {rental.firstName} {rental.lastName}</p>
-                <p>วันเช่า: {rental.rentalDate}</p>
-                <p>วันคืน: {rental.returnDate}</p>
-                <p>ยอดรวม: {rental.totalAmount}</p>
-                <p>เลขพัสดุ: {rental.tracking_number || 'ไม่มีข้อมูล'}</p>
-                <p>สถานะ: {rental.status || 'รอการจัดการ'}</p>
-                <p>สถานะการชำระเงิน: {rental.paymentStatus}</p>
+            filterRentals().map((rental) => {
+              console.log(rental.id); // แสดง rental.id ในคอนโซล
+              console.log()
+              return (
+                <div key={rental.id} className="rental-item">
+                  <h2>ชื่อหนังสือ: {rental.bookName}</h2>
+                  <p>ผู้เช่า: {rental.firstName} {rental.lastName}</p>
+                  <p>วันเช่า: {rental.rentalDate}</p>
+                  <p>วันคืน: {rental.returnDate}</p>
+                  <p>ยอดรวม: {rental.totalAmount}</p>
+                  <p>เลขพัสดุ: {rental.tracking_number || 'ไม่มีข้อมูล'}</p>
+                  <p>สถานะ: {rental.status || 'รอการจัดการ'}</p>
+                  <p>สถานะการชำระเงิน: {rental.paymentStatus}</p>
 
-                <button onClick={() => handlePayment(rental)}>
-                  จ่ายตัง
-                </button>
-              </div>
-            ))
-          ) : (
-            <p>ไม่มีข้อมูลที่จะแสดง</p>
-          )}
-        </div>
+                  <button onClick={() => handlePayment(rental)}>
+                    จ่ายตัง
+                  </button>
+                </div>
+              );
+            })
+  ) : (
+    <p>ไม่มีข้อมูลที่จะแสดง</p>
+  )}
+</div>
+
         <ToastContainer
           position="top-center"
           autoClose={5000}
@@ -124,4 +130,4 @@ function AdminQRCodeDetails() {
   );
 }
 
-export default AdminQRCodeDetails;
+export default AdminRentaltoPay;

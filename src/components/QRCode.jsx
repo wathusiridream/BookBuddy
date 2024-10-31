@@ -16,9 +16,9 @@ function QRCode() {
   const [phoneNumber, setPhoneNumber] = useState(""); // Initial phoneNumber state
   const [qrCode, setQrCode] = useState("");
   const [timeLeft, setTimeLeft] = useState(180);
-  const { amount, rentalId } = location.state || {}; // Get amount and rentalId from location.state
+  const { amount, rentalId , promptpayNumber} = location.state || {}; // Get amount and rentalId from location.state
   const [lessorName, setLessorName] = useState(""); // State for lessor's name
-
+ 
   useEffect(() => {
     const fetchPromptPayNumber = async () => {
       if (!rentalId) return; // Exit if rentalId is not available
@@ -44,6 +44,7 @@ function QRCode() {
             console.log("Found ForRents Document:", forRentData); // Log found document data
             setPhoneNumber(forRentData.promptpayNumber); // Set phoneNumber to promptpayNumber from ForRents
             setLessorName(`${forRentData.nameTitle} ${forRentData.firstname} ${forRentData.lastName}`);
+            
           } else {
             console.log("No matching document found for the provided bookId.");
           }
@@ -57,7 +58,7 @@ function QRCode() {
   
     fetchPromptPayNumber();
   }, [rentalId]); // Run when rentalId changes
-  
+
   function handleQR() {
     setQrCode(generatePayload(phoneNumber, { amount }));
     setTimeLeft(180); // Reset countdown to 3 minutes
@@ -84,7 +85,7 @@ function QRCode() {
 
   // Function to handle navigation to CheckSlip
   function handleConfirm() {
-    navigate('/CheckSlip', { state: { amount, rentalId } }); 
+    navigate('/CheckSlip', { state: { amount, rentalId , promptpayNumber: phoneNumber } }); 
   }
 
   const handleBackButtonClick = () => {

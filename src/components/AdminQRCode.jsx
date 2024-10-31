@@ -3,7 +3,7 @@ import { QRCodeCanvas } from 'qrcode.react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { db } from './../utils/firebase';
 import { doc, getDoc } from 'firebase/firestore';
-import NavBar from './NavBar';
+import AdminNavBar from './AdminNavBar';
 import { arrowBack } from 'ionicons/icons';
 import { IonIcon } from '@ionic/react';
 
@@ -12,7 +12,7 @@ const generatePayload = require('promptpay-qr');
 function AdminQRCode() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { amount, rentalId } = location.state || {};
+  const { amount, rentalId , promptpayNumber } = location.state || {};
   const [phoneNumber, setPhoneNumber] = useState("");
   const [qrCode, setQrCode] = useState("");
   const [timeLeft, setTimeLeft] = useState(180);
@@ -37,6 +37,9 @@ function AdminQRCode() {
             const forRentData = forRentDoc.data();
             setPhoneNumber(forRentData.promptpayNumber);
             setLessorName(`${forRentData.nameTitle} ${forRentData.firstname} ${forRentData.lastName}`);
+
+            // Log promptpayNumber ที่ได้จาก Firestore
+            console.log("PromptPay Number:", forRentData.promptpayNumber);
           } else {
             console.log("ไม่พบเอกสารที่ตรงกับ bookId นี้");
           }
@@ -51,16 +54,21 @@ function AdminQRCode() {
     fetchPromptPayNumber();
   }, [rentalId]);
 
-  function handleQR() {
-    setQrCode(generatePayload(phoneNumber, { amount }));
-    setTimeLeft(180);
-  }
-
   useEffect(() => {
     if (amount > 0) {
       handleQR();
     }
   }, [amount, phoneNumber]);
+
+  function handleQR() {
+    const qrData = generatePayload(phoneNumber, { amount });
+    setQrCode(qrData);
+    setTimeLeft(180);
+
+    // Log totalAmount ที่ใช้สร้าง QR Code
+    console.log("Total Amount for QR Code:", amount);
+    console.log("rentalId : " , rentalId) 
+  }
 
   useEffect(() => {
     let timer;
@@ -75,17 +83,18 @@ function AdminQRCode() {
     return () => clearInterval(timer);
   }, [qrCode, timeLeft]);
 
-  function handleConfirm() {
-    navigate('/CheckSlip', { state: { amount, rentalId } });
+  function handleConfirm() {  
+    console.log("Sending PromptPay Number:", phoneNumber); // เพิ่มบรรทัดนี้
+    navigate('/AdminCheckSlip', { state: { amount, promptpayNumber: phoneNumber, rentalId } });
   }
 
   const handleBackButtonClick = () => {
-    navigate('/home');
+    navigate('/AdminRentaltoPay');
   };
 
   return (
     <div style={{ backgroundColor: 'white' }}>
-      <NavBar />
+      <AdminNavBar />
       <IonIcon
         icon={arrowBack}
         onClick={handleBackButtonClick}
