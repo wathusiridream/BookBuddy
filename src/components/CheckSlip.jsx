@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import '../WebStyle/CheckSlip.css';
 import { db } from './../utils/firebase'; // Import Firestore
 import { doc, updateDoc } from 'firebase/firestore'; // Import Firestore functions
+import { storage } from './../utils/firebase'; // Import Firebase Storage
+import { ref, uploadBytes } from 'firebase/storage'; // Import storage functions
 import { useLocation , useNavigate } from 'react-router-dom'; // Import useLocation
 import NavBar from './NavBar';
 import { arrowBack } from 'ionicons/icons';
@@ -16,7 +18,6 @@ function CheckSlip() {
   const [message, setMessage] = useState('');
   const [paymentStatus, setPaymentStatus] = useState('not paid');
 
-  // ... โค้ดอื่นๆ
   const handleFileChange = (e) => {
     setFiles(e.target.files[0]);
   };
@@ -28,10 +29,15 @@ function CheckSlip() {
       return;
     }
 
-    const formData = new FormData();
-    formData.append("files", files);
-
     try {
+      // Upload the file to Firebase Storage
+      const storageRef = ref(storage, `slips/${rentalId}/${files.name}`); // Define the storage path
+      await uploadBytes(storageRef, files); // Upload the file
+
+      // Call the external API to check the slip
+      const formData = new FormData();
+      formData.append("files", files);
+
       const res = await fetch("https://api.slipok.com/api/line/apikey/31011", {
         method: "POST",
         headers: {
@@ -49,7 +55,6 @@ function CheckSlip() {
         if (data.data?.success === true) {
           setPaymentStatus('paid');
           const rentalRef = doc(db, 'rentals', rentalId); // ใช้ rentalId ที่ดึงมาจาก location.state
-          console.log(rentalId)
           await updateDoc(rentalRef, { paymentStatus: 'paid' });
         } else {
           setPaymentStatus('not paid');
@@ -61,9 +66,11 @@ function CheckSlip() {
       setMessage('เกิดข้อผิดพลาดระหว่างการอัปโหลดสลิป');
     }
   };
+
   const handleBackButtonClick = () => {
     navigate('/');
-};
+  };
+
   return (
     <div>
       <NavBar/>

@@ -20,6 +20,8 @@ import ForRentHistory from './components/ForRentHistory';
 import UserInformationForm from './components/UserInformation';
 import AllRentalHistory from './components/AllRentalHistory';
 import AllMemBers from './components/AllMemBers';
+import AdminQRCode from './components/AdminQRCode';
+import AdminQRCodeDetails from './components/AdminQRCodeDetail';
 
 function App() {
   return (
@@ -46,6 +48,8 @@ function App() {
             <Route path="/UserInformationForm/:id" element={<UserInformationForm/>}/>
             <Route path="/AllRental" element={<AllRentalHistory/>}/>
             <Route path="/AllMembers" element={<AllMemBers/>}/>
+            <Route path='/AdminQRCode' element={<AdminQRCode/>}/>
+            <Route path='/AdminQRCodeDetails' element={<AdminQRCodeDetails/>}/>
           </Routes>
         </Router>
     </div>

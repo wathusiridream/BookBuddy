@@ -51,7 +51,7 @@ function AdminHomepage() {
               <img src="rentallist.jpg" alt="รายการเช่า" />
               <h2>รายการการเช่าทั้งหมด</h2>
             </div>
-            <div className="card">
+            <div className="card" onClick={() => navigate('/AdminQRCodeDetails')}>
               <img src="salary02.jpg" alt="การจ่ายเงิน" />
               <h2>จ่ายเงินค่าเช่าให้ผู้ปล่อยเช่า</h2>
             </div>

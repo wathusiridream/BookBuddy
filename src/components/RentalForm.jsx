@@ -1,21 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import '../WebStyle/RentalForm.css'; // Import CSS file
-import { TextField, FormControl, Select, MenuItem , Card , CardContent , Typography } from '@mui/material';
+import { TextField, Card, CardContent, Typography } from '@mui/material';
 import { IonIcon } from '@ionic/react';
-import { personOutline, callOutline , arrowBack } from 'ionicons/icons';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker'; 
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import dayjs from 'dayjs';
-import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+import { personOutline, callOutline, arrowBack } from 'ionicons/icons';
 import { db } from './../utils/firebase'; // Import Firestore
-import { addDoc, collection, updateDoc, doc, getDoc , query , where , getDocs} from 'firebase/firestore'; // Import necessary Firestore functions
+import { addDoc, collection, updateDoc, doc, getDoc, query, where, getDocs } from 'firebase/firestore'; // Import necessary Firestore functions
 import { getAuth } from 'firebase/auth'; // Import getAuth
 import { useNavigate, useParams } from 'react-router-dom';
 import NavBar from './NavBar';
-
-// Add plugin
-dayjs.extend(isSameOrBefore);
 
 function RentalForm() {
   const navigate = useNavigate();
@@ -24,16 +16,11 @@ function RentalForm() {
     firstName: '',
     lastName: '',
     phone: '',
-    rentalDate: dayjs(),
-    returnDate: dayjs(),
   });
   const [userId, setUserId] = useState(null); // State for the user ID
   const [book, setBook] = useState(null); // State for book details
   const [errorMessage, setErrorMessage] = useState('');
-  const [days, setDays] = useState(1);
-  const shippingCost =  40 ;
-
-  const today = dayjs();
+  const [days, setDays] = useState(1); // Initial days to 1
 
   useEffect(() => {
     const auth = getAuth();
@@ -79,18 +66,10 @@ function RentalForm() {
 
       fetchUserInfo();
     }
-  }
-  )
+  }, []);
+
   const calculateTotalRental = () => {
-    return (book?.pricePerDay || 0) * days ; // Use book price per day
-  };
-
-  const calculateInsurance = () => {
-    return calculateTotalRental() * 0.3; // Insurance cost 30%
-  };
-
-  const calculateFinalTotal = () => {
-    return calculateTotalRental() + calculateInsurance() + shippingCost; // Total including insurance
+    return (book?.pricePerDay || 0) * days; // Use book price per day
   };
 
   const handleSubmit = async (e) => {
@@ -103,41 +82,39 @@ function RentalForm() {
       firstName: formData.firstName,
       lastName: formData.lastName,
       phone: formData.phone,
-      rentalDate: formData.rentalDate.toISOString(),
-      returnDate: formData.returnDate.toISOString(),
-      totalAmount: calculateFinalTotal(),
+      totalAmount: calculateTotalRental(), // Use total rental amount
       days: days,
       nameRented: book?.bookName, // Use the book name from Firestore
       paymentStatus: 'not paid',
       returnStatus: 'not yet',
       bookId: id, // Add the book ID here
+      renter_received: false, // เพิ่มตัวแปร renter_received
+      renter_returned: false, // เพิ่มตัวแปร renter_returned
+      lessor_shipped: false, // เพิ่มตัวแปร lessor_shipped
+      lessor_shipped_return: false
     };
   
     try {
       const docRef = await addDoc(collection(db, 'rentals'), rentalData);
       await updateDoc(docRef, { rentalId: docRef.id });
   
-      alert(`ฟอร์มถูกส่งเรียบร้อยแล้ว\nระยะเวลาที่เช่า: ${days} วัน\nค่าจัดส่ง: ${shippingCost} บาท\nค่าเช่าสุทธิ: ${calculateFinalTotal()} บาท`);
+      alert(`ฟอร์มถูกส่งเรียบร้อยแล้ว\nระยะเวลาที่เช่า: ${days} วัน\nค่าเช่าสุทธิ: ${calculateTotalRental()} บาท`);
   
       // Navigate to the QRCode component and pass the rentalId
-      navigate('/QRCode', { state: { amount: calculateFinalTotal(), rentalId: docRef.id, bookId: id } }); // Pass the bookId to the QRCode component
+      navigate('/QRCode', { state: { amount: calculateTotalRental(), rentalId: docRef.id, bookId: id } }); // Pass the bookId to the QRCode component
     } catch (error) {
       console.error('Error adding document: ', error);
       alert('เกิดข้อผิดพลาดในการส่งข้อมูล กรุณาลองใหม่อีกครั้ง');
     }
   };
   
-
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleReturnDateChange = (newDate) => {
-    setFormData({ ...formData, returnDate: newDate });
-    if (formData.rentalDate && newDate) {
-      const dayDifference = newDate.diff(dayjs(formData.rentalDate), 'day');
-      setDays(dayDifference);
-    }
+  const handleDaysChange = (e) => {
+    const value = Math.max(1, e.target.value); // Ensure days is at least 1
+    setDays(value);
   };
 
   if (!book) {
@@ -146,21 +123,23 @@ function RentalForm() {
   
   const handleBackButtonClick = () => {
     navigate(`/BooksDetail/${book.id}`);
-};
+  };
+
   return (
-    <div style={{backgroundColor : 'white'}}>
-      <NavBar/>
+    <div style={{ backgroundColor: 'white' }}>
+      <NavBar />
       <IonIcon 
-                icon={arrowBack}  
-                onClick={handleBackButtonClick}
-                className="backtoshowbook"
-                aria-label='ย้อนกลับ'
-            /> 
-            <span 
-                className="back-text" 
-                onClick={handleBackButtonClick}
-                >ย้อนกลับ
-            </span>
+        icon={arrowBack}  
+        onClick={handleBackButtonClick}
+        className="backtoshowbook"
+        aria-label='ย้อนกลับ'
+      /> 
+      <span 
+        className="back-text" 
+        onClick={handleBackButtonClick}
+      >
+        ย้อนกลับ
+      </span>
 
       <h2 className="detailbook-title">แบบฟอร์มการเช่าหนังสือ</h2>
       <div className="rental-container">
@@ -187,16 +166,14 @@ function RentalForm() {
               <Typography>ผู้แต่ง: {book.author}</Typography>
               <Typography>แนะนำ: {book.introduction}</Typography>
               <Typography>ราคาเช่าต่อวัน: {book.pricePerDay} บาท</Typography>
-
             </CardContent>
           </Card>
         </div>
 
         <div className="form-section">
           <form onSubmit={handleSubmit} className="rental-form">
+            <h3>รายละเอียดการเช่า</h3>
             <div className="input-with-icon">
-              <h3>รายละเอียดการเช่า</h3>
-              
               <IonIcon icon={personOutline} />
               <TextField 
                 label="ชื่อจริง" 
@@ -225,12 +202,10 @@ function RentalForm() {
             <div className="input-with-icon">
               <IonIcon icon={callOutline} />
               <TextField 
-                label="กรุณากรอกเบอร์โทร 10 หลัก"
+                label="เบอร์โทรศัพท์" 
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                required 
-                pattern="[0-9]{10}"
                 margin="normal" 
                 variant="outlined" 
                 fullWidth
@@ -238,34 +213,23 @@ function RentalForm() {
               />
             </div>
 
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                label="วันที่เช่า"
-                value={formData.rentalDate}
-                onChange={(newDate) => setFormData({ ...formData, rentalDate: newDate })}
-                minDate={today}
-                renderInput={(params) => <TextField {...params} />}
-                fullWidth
+            {/* Spinbox for days */}
+            <div className="input-with-icon">
+              <label>จำนวนวันที่เช่า:</label>
+              <input 
+                type="number" 
+                value={days} 
+                onChange={handleDaysChange}
+                min="1" // Set minimum value to 1
+                style={{ width: '100%', padding: '8px', marginTop: '10px' }} 
               />
-            </LocalizationProvider>
+            </div>
 
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                label="วันที่คืน"
-                value={formData.returnDate}
-                onChange={handleReturnDateChange}
-                minDate={formData.rentalDate || today}
-                renderInput={(params) => <TextField {...params} />}
-                fullWidth
-              />
-            </LocalizationProvider>
+            <div className="total-amount">
+              <h3>ยอดรวมค่าเช่า: {calculateTotalRental()} บาท</h3>
+            </div>
             {errorMessage && <p className="error-message">{errorMessage}</p>}
-              <Typography>ระยะเวลาที่เช่า: {days} วัน</Typography>
-            <p>ค่าเช่า: {calculateTotalRental()} บาท</p>
-            {days > 0 && <p>ค่าประกัน: {calculateInsurance()} บาท</p>}
-            {days > 0 && <p>ค่าจัดส่ง: {shippingCost} บาท</p>}
-            <p>ค่าเช่าสุทธิ: {calculateFinalTotal()} บาท</p>
-            <button type="submit" className="submit-button">ส่งฟอร์ม</button>
+            <button type="submit" className="submit-button">ส่งข้อมูล</button>
           </form>
         </div>
       </div>

@@ -7,10 +7,10 @@ import NavBar from './NavBar';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-function RentHistory() {
+function AdminQRCodeDetails() {
   const [rentalHistory, setRentalHistory] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('notReceived');
+  const [activeTab, setActiveTab] = useState('inProgress');
 
   const auth = getAuth();
   const currentUserId = auth.currentUser ? auth.currentUser.uid : null;
@@ -38,33 +38,6 @@ function RentHistory() {
     return () => unsubscribe();
   }, [currentUserId]);
 
-  const handleReceive = async (rental) => {
-    try {
-      const rentalRef = doc(db, 'rentals', rental.id);
-      const currentDate = new Date();
-      const returnDate = new Date(currentDate);
-      returnDate.setDate(returnDate.getDate() + rental.days); // บวกจำนวนวันที่เช่า
-
-      await updateDoc(rentalRef, {
-        renter_received: true,
-        date_return: returnDate.toISOString().split('T')[0], // เก็บเป็นรูปแบบ YYYY-MM-DD
-      });
-
-      // แสดงป๊อปอัพด้วย toast
-      toast.success(`คุณจะต้องคืนหนังสือภายในวันที่: ${returnDate.toISOString().split('T')[0]}`);
-
-      // อัปเดต rentalHistory ในสถานะ
-      setRentalHistory((prevRentals) =>
-        prevRentals.map((rentalItem) =>
-          rentalItem.id === rental.id ? { ...rentalItem, renter_received: true, date_return: returnDate.toISOString().split('T')[0] } : rentalItem
-        )
-      );
-    } catch (error) {
-      console.error('Error updating received status:', error);
-      alert('เกิดข้อผิดพลาดในการยืนยันการได้รับของ');
-    }
-  };
-
   const handleReturn = async (rentalId) => {
     try {
       const rentalRef = doc(db, 'rentals', rentalId);
@@ -83,14 +56,7 @@ function RentHistory() {
   };
 
   const filterRentals = () => {
-    if (activeTab === 'notReceived') {
-      return rentalHistory.filter((rental) => !rental.renter_received);
-    } else if (activeTab === 'inProgress') {
-      return rentalHistory.filter((rental) => rental.renter_received && !rental.renter_returned);
-    } else if (activeTab === 'returned') {
-      return rentalHistory.filter((rental) => rental.renter_received && rental.renter_returned);
-    }
-    return rentalHistory;
+    return rentalHistory.filter((rental) => rental.renter_received && !rental.renter_returned);
   };
 
   if (loading) {
@@ -104,14 +70,8 @@ function RentHistory() {
         <h2>ประวัติการเช่าของฉัน</h2>
 
         <div className="tabs">
-          <button onClick={() => setActiveTab('notReceived')} className={activeTab === 'notReceived' ? 'active' : ''}>
-            รายการที่ยังไม่ได้รับ
-          </button>
           <button onClick={() => setActiveTab('inProgress')} className={activeTab === 'inProgress' ? 'active' : ''}>
             รายการกำลังเช่า
-          </button>
-          <button onClick={() => setActiveTab('returned')} className={activeTab === 'returned' ? 'active' : ''}>
-            รายการที่คืนแล้ว
           </button>
         </div>
 
@@ -127,11 +87,6 @@ function RentHistory() {
                 <p>เลขพัสดุ: {rental.tracking_number || 'ไม่มีข้อมูล'}</p>
                 <p>สถานะ: {rental.status || 'รอการจัดการ'}</p>
                 <p>สถานะการชำระเงิน: {rental.paymentStatus}</p>
-
-                {/* แสดงปุ่มยืนยันการได้รับของเมื่อ lessor_shipped เป็น true */}
-                {activeTab === 'notReceived' && rental.lessor_shipped && !rental.renter_received && (
-                  <button onClick={() => handleReceive(rental)}>ยืนยันการได้รับของ</button>
-                )}
 
                 {/* แสดงปุ่มคืนหนังสือในรายการกำลังเช่า */}
                 {activeTab === 'inProgress' && rental.renter_received && !rental.renter_returned && (
@@ -159,4 +114,4 @@ function RentHistory() {
   );
 }
 
-export default RentHistory;
+export default AdminQRCodeDetails;
