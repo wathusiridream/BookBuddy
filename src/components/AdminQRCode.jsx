@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { QRCodeCanvas } from 'qrcode.react';
-import { useLocation, useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useLocation, useNavigate } from 'react-router-dom';
 import { db } from './../utils/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import NavBar from './NavBar';
@@ -11,63 +11,56 @@ const generatePayload = require('promptpay-qr');
 
 function AdminQRCode() {
   const location = useLocation();
-  const navigate = useNavigate(); // Initialize useNavigate
-  const initialAmount = location.state?.amount || 0; // Get amount from location state
-  const [phoneNumber, setPhoneNumber] = useState(""); // Initial phoneNumber state
+  const navigate = useNavigate();
+  const { amount, rentalId } = location.state || {};
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [qrCode, setQrCode] = useState("");
   const [timeLeft, setTimeLeft] = useState(180);
-  const { amount, rentalId } = location.state || {}; // Get amount and rentalId from location.state
-  const [lessorName, setLessorName] = useState(""); // State for lessor's name
+  const [lessorName, setLessorName] = useState("");
 
   useEffect(() => {
     const fetchPromptPayNumber = async () => {
-      if (!rentalId) return; // Exit if rentalId is not available
-  
+      if (!rentalId) return;
+
       try {
-        // Fetch the rental document using rentalId
         const rentalDocRef = doc(db, 'rentals', rentalId);
         const rentalDoc = await getDoc(rentalDocRef);
-  
+
         if (rentalDoc.exists()) {
           const rentalData = rentalDoc.data();
-          console.log("Rental Data:", rentalData); // Log rental data
-          const bookId = rentalData.bookId; // Get bookId from rental data
-          console.log("Book ID:", bookId); // Log bookId
-  
-          // Fetch the document from ForRents collection using bookId as document ID
+          const bookId = rentalData.bookId;
+
           const forRentDocRef = doc(db, 'ForRents', bookId);
-          console.log(forRentDocRef)
           const forRentDoc = await getDoc(forRentDocRef);
-  
+
           if (forRentDoc.exists()) {
             const forRentData = forRentDoc.data();
-            console.log("Found ForRents Document:", forRentData); // Log found document data
-            setPhoneNumber(forRentData.promptpayNumber); // Set phoneNumber to promptpayNumber from ForRents
-            setLessorName(`${forRentData.nameTitle} ${forRentData.firstname} ${forRentData.lastName}`); // Set lessor's name
+            setPhoneNumber(forRentData.promptpayNumber);
+            setLessorName(`${forRentData.nameTitle} ${forRentData.firstname} ${forRentData.lastName}`);
           } else {
-            console.log("No matching document found for the provided bookId.");
+            console.log("ไม่พบเอกสารที่ตรงกับ bookId นี้");
           }
         } else {
-          console.log("Rental document not found.");
+          console.log("ไม่พบเอกสารการเช่านี้");
         }
       } catch (error) {
-        console.error("Error fetching promptpayNumber: ", error);
+        console.error("ข้อผิดพลาดในการดึง promptpayNumber:", error);
       }
     };
-  
+
     fetchPromptPayNumber();
-  }, [rentalId]); // Run when rentalId changes
-  
+  }, [rentalId]);
+
   function handleQR() {
     setQrCode(generatePayload(phoneNumber, { amount }));
-    setTimeLeft(180); // Reset countdown to 3 minutes
+    setTimeLeft(180);
   }
 
   useEffect(() => {
     if (amount > 0) {
-      handleQR(); // Generate QR code when amount is available
+      handleQR();
     }
-  }, [amount, phoneNumber]); // Include phoneNumber to regenerate QR code if it changes
+  }, [amount, phoneNumber]);
 
   useEffect(() => {
     let timer;
@@ -82,9 +75,8 @@ function AdminQRCode() {
     return () => clearInterval(timer);
   }, [qrCode, timeLeft]);
 
-  // Function to handle navigation to CheckSlip
   function handleConfirm() {
-    navigate('/CheckSlip', { state: { amount, rentalId } }); 
+    navigate('/CheckSlip', { state: { amount, rentalId } });
   }
 
   const handleBackButtonClick = () => {
@@ -92,24 +84,24 @@ function AdminQRCode() {
   };
 
   return (
-    <div style={{backgroundColor : 'white'}}>
-      <NavBar/>
-      <IonIcon 
-        icon={arrowBack}  
+    <div style={{ backgroundColor: 'white' }}>
+      <NavBar />
+      <IonIcon
+        icon={arrowBack}
         onClick={handleBackButtonClick}
         className="backtoshowbook"
         aria-label='ย้อนกลับ'
-      /> 
-      <span 
-        className="back-text" 
+      />
+      <span
+        className="back-text"
         onClick={handleBackButtonClick}
       >
         ย้อนกลับ
       </span>
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', padding: '20px'}}>
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', padding: '20px' }}>
         <h1>ชำระเงิน</h1>
         <h2>จำนวนเงิน : {amount} บาท</h2>
-        {lessorName && <h3>ผู้ปล่อยเช่า : {lessorName}</h3>} {/* Display lessor's name */}
+        {lessorName && <h3>ผู้ปล่อยเช่า : {lessorName}</h3>}
         
         {qrCode && (
           <div className="timer">
@@ -123,14 +115,6 @@ function AdminQRCode() {
             </div>
           </div>
         )}
-        <input
-          type="text"
-          value={phoneNumber}
-          onChange={(e) => setPhoneNumber(e.target.value)} // Update phoneNumber on input change
-          placeholder="หมายเลขพร้อมเพย์"
-          disabled
-          style={{ height: '0px', backgroundColor : 'white', color : 'white' }} 
-        />
         <button onClick={handleConfirm} className="confirm-button">
           ชำระแล้ว
         </button>

@@ -64,6 +64,8 @@
 .form-section {
   flex: 1;
   padding-left: 10px;
+  align-items: flex-start;
+  justify-content: flex-start;
 }
 
 .input-field {
@@ -124,4 +126,10 @@
   border: none;
   padding: 10px;
   cursor: pointer;
+}
+
+.rental-form {
+  align-items: flex-start;
+  justify-content: flex-start;
+  margin-top: 5rem; /* ปรับค่าได้ตามต้องการ */
 }

@@ -1,62 +1,65 @@
 import React, { useEffect, useState } from 'react';
-import '../WebStyle/RentHistory.css';
-import { db } from './../utils/firebase';
-import { collection, onSnapshot, doc, updateDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
-import NavBar from './NavBar';
-import { ToastContainer, toast } from 'react-toastify';
+import { collection, onSnapshot, addDoc } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
+import AdminNavBar from './AdminNavBar';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { db } from './../utils/firebase'; // นำเข้า db ที่นี่
+import '../WebStyle/RentHistory.css';
 
 function AdminQRCodeDetails() {
   const [rentalHistory, setRentalHistory] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('inProgress');
-
+  const [activeTab, setActiveTab] = useState('pending'); // สถานะเริ่มต้น
+  const navigate = useNavigate();
   const auth = getAuth();
-  const currentUserId = auth.currentUser ? auth.currentUser.uid : null;
 
   useEffect(() => {
     const rentalCollection = collection(db, 'rentals');
-
-    // ใช้ onSnapshot เพื่อฟังการเปลี่ยนแปลงในฐานข้อมูล
-    const unsubscribe = onSnapshot(rentalCollection, (snapshot) => {
-      const rentalList = snapshot.docs
-        .map(doc => ({
+    const unsubscribe = onSnapshot(
+      rentalCollection,
+      (snapshot) => {
+        const rentalList = snapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data()
-        }))
-        .filter(rental => rental.userId === currentUserId);
-
-      setRentalHistory(rentalList);
-      setLoading(false);
-    }, (error) => {
-      console.error('Error fetching rental history:', error);
-      setLoading(false);
-    });
-
-    // คืนค่าฟังก์ชันสำหรับยกเลิกการฟังเมื่อคอมโพเนนต์ถูก unmounted
+        }));
+        setRentalHistory(rentalList);
+        setLoading(false);
+      },
+      (error) => {
+        console.error('Error fetching rental history:', error);
+        setLoading(false);
+      }
+    );
     return () => unsubscribe();
-  }, [currentUserId]);
-
-  const handleReturn = async (rentalId) => {
-    try {
-      const rentalRef = doc(db, 'rentals', rentalId);
-      await updateDoc(rentalRef, { renter_returned: true });
-
-      // อัปเดต rentalHistory ในสถานะ
-      setRentalHistory((prevRentals) =>
-        prevRentals.map((rental) =>
-          rental.id === rentalId ? { ...rental, renter_returned: true } : rental
-        )
-      );
-    } catch (error) {
-      console.error('Error updating return status:', error);
-      alert('เกิดข้อผิดพลาดในการคืนหนังสือ');
-    }
-  };
+  }, []);
 
   const filterRentals = () => {
-    return rentalHistory.filter((rental) => rental.renter_received && !rental.renter_returned);
+    if (activeTab === 'pending') {
+      return rentalHistory.filter((rental) => rental.renter_received && !rental.renter_returned);
+    } else if (activeTab === 'completed') {
+      return rentalHistory.filter((rental) => rental.renter_returned);
+    }
+    return rentalHistory; // สำหรับ tab อื่น ๆ
+  };
+
+  const handlePayment = async (rental) => {
+    const admin = auth.currentUser;
+    const adminEmail = admin ? admin.email : 'N/A';
+    const adminName = admin ? `${admin.displayName}` : 'N/A';
+
+    try {
+      await addDoc(collection(db, 'adminpay'), {
+        rentalsId: rental.id,
+        paymentStatus: false,
+        adminEmail,
+        adminName,
+      });
+      navigate('/AdminQRCode', { state: { rentalId: rental.id, amount: rental.totalAmount } });
+    } catch (error) {
+      console.error('Error adding document to adminpay:', error);
+    }
   };
 
   if (loading) {
@@ -65,13 +68,23 @@ function AdminQRCodeDetails() {
 
   return (
     <div>
-      <NavBar />
+      <AdminNavBar />
       <div className="renting-history-page">
-        <h2>ประวัติการเช่าของฉัน</h2>
-
+        <h2>รายการเช่าที่รอชำระเงิน</h2>
+        
+        {/* Tabs สำหรับเปลี่ยนหมวดหมู่ */}
         <div className="tabs">
-          <button onClick={() => setActiveTab('inProgress')} className={activeTab === 'inProgress' ? 'active' : ''}>
-            รายการกำลังเช่า
+          <button 
+            className={activeTab === 'pending' ? 'active' : ''} 
+            onClick={() => setActiveTab('pending')}
+          >
+            รอการชำระเงิน
+          </button>
+          <button 
+            className={activeTab === 'completed' ? 'active' : ''} 
+            onClick={() => setActiveTab('completed')}
+          >
+            ชำระเงินเสร็จสิ้น
           </button>
         </div>
 
@@ -88,20 +101,17 @@ function AdminQRCodeDetails() {
                 <p>สถานะ: {rental.status || 'รอการจัดการ'}</p>
                 <p>สถานะการชำระเงิน: {rental.paymentStatus}</p>
 
-                {/* แสดงปุ่มคืนหนังสือในรายการกำลังเช่า */}
-                {activeTab === 'inProgress' && rental.renter_received && !rental.renter_returned && (
-                  <button onClick={() => handleReturn(rental.id)}>คืนหนังสือแล้ว</button>
-                )}
+                <button onClick={() => handlePayment(rental)}>
+                  จ่ายตัง
+                </button>
               </div>
             ))
           ) : (
             <p>ไม่มีข้อมูลที่จะแสดง</p>
           )}
         </div>
-
-        {/* ToastContainer สำหรับแสดงป๊อปอัพ */}
         <ToastContainer
-          position="top-center" // ตำแหน่งอยู่ซ้ายบน
+          position="top-center"
           autoClose={5000}
           hideProgressBar={false}
           closeOnClick

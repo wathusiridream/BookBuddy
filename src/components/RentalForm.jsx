@@ -91,7 +91,8 @@ function RentalForm() {
       renter_received: false, // เพิ่มตัวแปร renter_received
       renter_returned: false, // เพิ่มตัวแปร renter_returned
       lessor_shipped: false, // เพิ่มตัวแปร lessor_shipped
-      lessor_shipped_return: false
+      lessor_shipped_return: false,
+      CheckSlip: false
     };
   
     try {
