@@ -27,11 +27,11 @@
 
 /* Image section settings */
 .image-section {
-  flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  max-width: 100%;
 }
 
 .product-image-large {
@@ -133,3 +133,22 @@
   justify-content: flex-start;
   margin-top: 5rem; /* ปรับค่าได้ตามต้องการ */
 }
+
+.image-section .MuiPaper-root {
+  margin: 10px;
+  left: 0;
+  width: 100%; /* กำหนดความกว้างเป็น 100% */
+  box-sizing: border-box; /* รวม margin และ padding ในการคำนวณความกว้าง */
+}
+
+.unique-spinbox {
+  width: 100%; /* ความกว้าง 100% */
+  padding: 8px; /* Padding */
+  margin-top: 10px; /* Margin ด้านบน */
+  font-size: 16px; /* ขนาดตัวอักษร */
+  border: 1px solid #000; /* กรอบ */
+  border-radius: 4px; /* มุมโค้ง */
+  appearance: none; /* ปิดการใช้สไตล์ของเบราว์เซอร์ */
+  background-color: #fff; /* สีพื้นหลัง */
+}
+

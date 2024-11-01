@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { db } from '../utils/firebase';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import NavBar from './NavBar';
 import '../WebStyle/Showbook.css';
 import { IonIcon } from '@ionic/react';
-import { searchCircleOutline , arrowBack} from 'ionicons/icons';
+import { searchCircleOutline, arrowBack } from 'ionicons/icons';
 import { useNavigate } from 'react-router-dom';
 
 const Showbook = () => {
@@ -16,9 +16,13 @@ const Showbook = () => {
 
     useEffect(() => {
         const fetchBooks = async () => {
+            // Create a query to filter books that are available for rent
             const booksCollection = collection(db, 'ForRents');
-            const bookSnapshot = await getDocs(booksCollection);
+            const q = query(booksCollection, where('availableforRent', '==', true)); // Ensure the field name is correct
+            const bookSnapshot = await getDocs(q);
             const bookList = bookSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+            console.log("Fetched Books:", bookList); // Debugging line to see fetched books
             setBooks(bookList);
             setIsLoading(false); // Set loading to false after fetching data
         };
@@ -37,7 +41,6 @@ const Showbook = () => {
         navigate('/ShowBooks'); // ใช้ -1 เพื่อย้อนกลับไปยังหน้าก่อนหน้า
     };
 
-
     return (
         <div className="book-list-container">
             <NavBar /> {/* Insert NavBar here */}
@@ -50,7 +53,7 @@ const Showbook = () => {
             <span 
                 className="back-text" 
                 onClick={handleBackButtonClick}
-                >ย้อนกลับ
+            >ย้อนกลับ
             </span>
             <h1 className="book-list-title">หนังสือที่สามารถเช่าได้</h1>
             <div className="search-bar">
@@ -90,12 +93,12 @@ const Showbook = () => {
                     <p className="loading-message">กำลังโหลด...</p>
                 ) : (
                     filteredBooks.length > 0 ? (
-                        filteredBooks.map(book => (
+                        filteredBooks.map(book => ( // Use filteredBooks here
                             <div 
                                 key={book.id} 
                                 className="book-item" 
                                 onClick={() => navigate(`/BooksDetail/${book.id}`)}
-                                >
+                            >
                                 {book.coverbookimg && (
                                     <div>
                                         <img className="book-cover-image" src={book.coverbookimg} alt="Cover" />

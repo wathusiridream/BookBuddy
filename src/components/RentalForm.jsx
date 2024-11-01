@@ -151,9 +151,7 @@ function RentalForm() {
             <CardContent>
               <Typography variant="h6">ข้อมูลผู้ปล่อยเช่า</Typography>
               <Typography>ชื่อ: {book.nameTitle} {book.firstname} {book.lastName}</Typography>
-              <Typography>วันเกิด: {book.dateofBirth}</Typography>
               <Typography>โทรศัพท์: {book.telephone}</Typography>
-              <Typography>หมายเลขประจำตัวประชาชน: {book.thaiID}</Typography>
             </CardContent>
           </Card>
 
@@ -215,22 +213,22 @@ function RentalForm() {
             </div>
 
             {/* Spinbox for days */}
-            <div className="input-with-icon">
-              <label>จำนวนวันที่เช่า:</label>
+            <div >
+              <label style={{marginRight : '20px' }}>จำนวนวันที่เช่า :</label>
               <input 
                 type="number" 
                 value={days} 
                 onChange={handleDaysChange}
                 min="1" // Set minimum value to 1
-                style={{ width: '100%', padding: '8px', marginTop: '10px' }} 
-              />
+                style={{backgroundColor : 'white' , width : '100px' , border : '1px solid #000'}}
+              /> 
             </div>
 
             <div className="total-amount">
               <h3>ยอดรวมค่าเช่า: {calculateTotalRental()} บาท</h3>
             </div>
             {errorMessage && <p className="error-message">{errorMessage}</p>}
-            <button type="submit" className="submit-button">ส่งข้อมูล</button>
+            <button type="submit" className="submit-button">ยืนยัน</button>
           </form>
         </div>
       </div>
