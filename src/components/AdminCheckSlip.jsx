@@ -90,7 +90,7 @@ console.log("rentalId : " , rentalId)
                             paymentStatus: false,
                             CheckSlip: false
                         });
-                        setPaymentStatus('not paid');
+                        setPaymentStatus('ยังไม่ได้ชำระเงิน');
                         setMessage('จำนวนเงินไม่ตรงกัน กรุณาตรวจสอบสลิป');
                     
                     } else if (apiLastFour !== promptpayLastFour) {
@@ -98,7 +98,7 @@ console.log("rentalId : " , rentalId)
                             paymentStatus: false,
                             CheckSlip: false
                         });
-                        setPaymentStatus('not paid');
+                        setPaymentStatus('ยังไม่ได้ชำระเงิน');
                         setMessage('หมายเลข PromptPay ไม่ตรงกัน กรุณาตรวจสอบสลิป');
                     } else {
                         await updateDoc(adminPayRef, {
@@ -106,7 +106,7 @@ console.log("rentalId : " , rentalId)
                             slippaylessorUrl: fileURL,
                             CheckSlip: true
                         });
-                        setPaymentStatus('paid');
+                        setPaymentStatus('ชำระเงินเรียบร้อย');
                         setMessage('ชำระเงินเรียบร้อยแล้ว!');
                     }
                     

@@ -120,7 +120,7 @@ function AdminRentaltoPay() {
         <h2>ชื่อหนังสือ: {rental.bookName}</h2>
         <p>ผู้เช่า: {rental.firstName} {rental.lastName}</p>
         <p>วันเช่า: {rental.rentalDate}</p>
-        <p>วันคืน: {rental.returnDate}</p>
+        <p>วันคืน: {rental.date_return}</p>
         <p>ยอดรวม: {rental.totalAmount}</p>
         <p>เลขพัสดุ: {rental.tracking_number || 'ไม่มีข้อมูล'}</p>
         <p>สถานะ: {rental.status || 'รอการจัดการ'}</p>

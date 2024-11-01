@@ -85,8 +85,7 @@ function RentalForm() {
       totalAmount: calculateTotalRental(), // Use total rental amount
       days: days,
       nameRented: book?.bookName, // Use the book name from Firestore
-      paymentStatus: 'not paid',
-      returnStatus: 'not yet',
+      paymentStatus: 'ยังไม่ได้ชำระเงิน',
       bookId: id, // Add the book ID here
       renter_received: false, // เพิ่มตัวแปร renter_received
       renter_returned: false, // เพิ่มตัวแปร renter_returned
