@@ -18,7 +18,8 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useNavigate } from "react-router-dom";
 import buddhistEra from 'dayjs/plugin/buddhistEra';
 import NavBar from './NavBar';
-
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const storage = getStorage();
 
@@ -64,6 +65,8 @@ const ForRentForm = () => {
     pricePerDay: '',
     coverbookimg: '',
     samplebookimg: '',
+
+    availableforRent : true 
   });
 
   const steps = ['ข้อมูลส่วนตัว', 'ที่อยู่', 'บัญชีธนาคาร', 'ข้อมูลหนังสือ', 'ภาพหนังสือ', 'ยืนยันข้อมูล'];
@@ -205,31 +208,29 @@ const ForRentForm = () => {
     }));
   };
 
-  const [flashMessage, setFlashMessage] = useState({ message: '', type: '' });
-
   const handleSubmit = async () => {
+    const user = auth.currentUser;
+    if (user) {
+        toast.info('กำลังบันทึกข้อมูล...'); // Show info toast while saving
+        try {
+            const forRentsCollectionRef = collection(db, "ForRents");
+            await addDoc(forRentsCollectionRef, {
+                ...formData,
+                userId: user.uid,
+                createdAt: serverTimestamp()
+            });
 
-      const user = auth.currentUser;
-      if (user) {
-          setFlashMessage({ message: 'กำลังบันทึกข้อมูล...', type: 'info' }); // แสดงข้อความกำลังบันทึก
-          try {
-              const forRentsCollectionRef = collection(db, "ForRents");
-              await addDoc(forRentsCollectionRef , {
-                  ...formData,
-                  userId: user.uid,
-                  createdAt: serverTimestamp()
-              });
-
-              console.log('Rental information added successfully');
-              setFlashMessage({ message: 'บันทึกข้อมูลสำเร็จ!', type: 'success' }); // แสดงข้อความสำเร็จ
-              handleReset();
-          } catch (error) {
-              console.error("Error adding rental information: ", error);
-              setFlashMessage({ message: 'บันทึกข้อมูลล้มเหลว!', type: 'error' }); // แสดงข้อความล้มเหลว
-          }
-      }
-  };
-
+            console.log('Rental information added successfully');
+            toast.success('บันทึกข้อมูลสำเร็จ!'); // Show success toast
+            handleReset();
+            navigate('/ShowBooks')
+        } catch (error) {
+            console.error("Error adding rental information: ", error);
+            toast.error('บันทึกข้อมูลล้มเหลว!'); // Show error toast
+        }
+        
+    }
+};
 
   function chkDigitPid(p_iPID) {
     var total = 0;
@@ -854,6 +855,15 @@ const ForRentForm = () => {
   return (
     <div className="lessors-info-page"> 
       <NavBar/>
+      <ToastContainer 
+          position="top-center" 
+          autoClose={3000} 
+          hideProgressBar={false} 
+          closeOnClick 
+          pauseOnHover 
+          draggable 
+          pauseOnFocusLoss 
+      />
         <div className="container">
             <Stepper className="stepper" activeStep={activeStep} alternativeLabel connector={<ColorlibConnector />}>
                 {steps.map((label, index) => (
@@ -867,14 +877,6 @@ const ForRentForm = () => {
             <div className="lessor-information">
                 {getStepContent(activeStep)}
             </div>
-
-            {/* แสดง flash message ที่นี่ */}
-            {flashMessage.message && (
-                <div className={`flash-message ${flashMessage.type}`}>
-                    {flashMessage.message}
-                </div>
-            )}
-
             <div className="buttons">
                 <Button
                     disabled={activeStep === 0}
