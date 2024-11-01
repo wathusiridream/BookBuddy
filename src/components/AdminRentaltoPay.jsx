@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getAuth } from 'firebase/auth';
-import { collection, onSnapshot, addDoc } from 'firebase/firestore';
+import { collection, onSnapshot, addDoc, doc, getDoc, query, where, getDocs } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import AdminNavBar from './AdminNavBar';
 import { ToastContainer } from 'react-toastify';
@@ -10,6 +10,7 @@ import '../WebStyle/RentHistory.css';
 
 function AdminRentaltoPay() {
   const [rentalHistory, setRentalHistory] = useState([]);
+  const [filteredRentals, setFilteredRentals] = useState([]); // สร้าง state สำหรับกรองข้อมูล
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('pending'); // สถานะเริ่มต้น
   const navigate = useNavigate();
@@ -35,14 +36,38 @@ function AdminRentaltoPay() {
     return () => unsubscribe();
   }, []);
 
-  const filterRentals = () => {
-    if (activeTab === 'pending') {
-      return rentalHistory.filter((rental) => rental.renter_received && !rental.renter_returned);
-    } else if (activeTab === 'completed') {
-      return rentalHistory.filter((rental) => rental.renter_returned);
-    }
-    return rentalHistory; // สำหรับ tab อื่น ๆ
-  };
+  useEffect(() => {
+    const filterRentals = async () => {
+      const adminpaySnapshot = await getDocs(collection(db, 'adminpay'));
+      const adminpayData = {};
+      adminpaySnapshot.forEach((doc) => {
+        const data = doc.data();
+        adminpayData[data.rentalsId] = data.paymentStatus;
+      });
+  
+      if (activeTab === 'pending') {
+        setFilteredRentals(
+          rentalHistory.filter((rental) => {
+            const isPaid = adminpayData[rental.id] === true;
+            // เงื่อนไขใหม่
+            return (rental.renter_received || rental.renter_returned) && !isPaid;
+          })
+        );
+      } else if (activeTab === 'completed') {
+        setFilteredRentals(
+          rentalHistory.filter((rental) => {
+            const isPaid = adminpayData[rental.id] === true;
+            return rental.renter_received && isPaid;
+          })
+        );
+      } else {
+        setFilteredRentals(rentalHistory); // สำหรับ tab อื่น ๆ
+      }
+    };
+  
+    filterRentals();
+  }, [activeTab, rentalHistory]);
+  
 
   const handlePayment = async (rental) => {
     const admin = auth.currentUser;
@@ -57,7 +82,6 @@ function AdminRentaltoPay() {
         adminName,
       });
       navigate('/AdminQRCode', { state: { rentalId: rental.id, amount: rental.totalAmount } });
-
     } catch (error) {
       console.error('Error adding document to adminpay:', error);
     }
@@ -90,31 +114,31 @@ function AdminRentaltoPay() {
         </div>
 
         <div className="rental-list">
-          {filterRentals().length > 0 ? (
-            filterRentals().map((rental) => {
-              console.log(rental.id); // แสดง rental.id ในคอนโซล
-              console.log()
-              return (
-                <div key={rental.id} className="rental-item">
-                  <h2>ชื่อหนังสือ: {rental.bookName}</h2>
-                  <p>ผู้เช่า: {rental.firstName} {rental.lastName}</p>
-                  <p>วันเช่า: {rental.rentalDate}</p>
-                  <p>วันคืน: {rental.returnDate}</p>
-                  <p>ยอดรวม: {rental.totalAmount}</p>
-                  <p>เลขพัสดุ: {rental.tracking_number || 'ไม่มีข้อมูล'}</p>
-                  <p>สถานะ: {rental.status || 'รอการจัดการ'}</p>
-                  <p>สถานะการชำระเงิน: {rental.paymentStatus}</p>
+  {filteredRentals.length > 0 ? (
+    filteredRentals.map((rental) => (
+      <div key={rental.id} className="rental-item">
+        <h2>ชื่อหนังสือ: {rental.bookName}</h2>
+        <p>ผู้เช่า: {rental.firstName} {rental.lastName}</p>
+        <p>วันเช่า: {rental.rentalDate}</p>
+        <p>วันคืน: {rental.returnDate}</p>
+        <p>ยอดรวม: {rental.totalAmount}</p>
+        <p>เลขพัสดุ: {rental.tracking_number || 'ไม่มีข้อมูล'}</p>
+        <p>สถานะ: {rental.status || 'รอการจัดการ'}</p>
+        <p>สถานะการชำระเงิน: {rental.paymentStatus}</p>
 
-                  <button onClick={() => handlePayment(rental)}>
-                    จ่ายตัง
-                  </button>
-                </div>
-              );
-            })
+        {/* แสดงปุ่ม "จ่ายตัง" เฉพาะใน tab "รอการชำระเงิน" */}
+        {activeTab === 'pending' && (
+          <button onClick={() => handlePayment(rental)}>
+            จ่ายตัง
+          </button>
+        )}
+      </div>
+    ))
   ) : (
     <p>ไม่มีข้อมูลที่จะแสดง</p>
   )}
 </div>
+
 
         <ToastContainer
           position="top-center"

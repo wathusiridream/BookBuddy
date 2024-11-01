@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../WebStyle/CheckSlip.css';
 import { db, storage } from './../utils/firebase'; // Import Firestore and Storage
-import { doc, updateDoc, getDoc } from 'firebase/firestore'; // Import Firestore functions
+import { doc, updateDoc, getDoc , setDoc , Timestamp } from 'firebase/firestore'; // Import Firestore functions
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'; // Import storage functions
 import { useLocation, useNavigate } from 'react-router-dom'; // Import useLocation
 import AdminNavBar from './AdminNavBar';
@@ -33,69 +33,83 @@ console.log("rentalId : " , rentalId)
             const storageRef = ref(storage, `slips/${rentalId}/${files.name}`);
             await uploadBytes(storageRef, files);
             const fileURL = await getDownloadURL(storageRef);
-
+    
             // Call the external API to check the slip
             const formData = new FormData();
             formData.append("files", files);
-
-            const res = await fetch("https://api.slipok.com/api/line/apikey/31011", {
+    
+            const res = await fetch("https://api.slipok.com/api/line/apikey/33075", {
                 method: "POST",
                 headers: {
-                    "x-authorization": "SLIPOK64TXGV0"
+                    "x-authorization": "SLIPOK7K2C7YI"
                 },
                 body: formData
             });
-
+    
             if (res.ok) {
                 const data = await res.json();
                 console.log("API Response Data:", data);
-
+    
                 setSlipOkData(data.data);
                 setMessage('กำลังตรวจสอบลสิป โปรดรอสักครู่');
-
+    
                 if (data.data?.success === true) {
                     const rentalRef = doc(db, 'rentals', rentalId);
                     const rentalSnap = await getDoc(rentalRef);
                     const totalAmount = rentalSnap.data()?.totalAmount;
-
+    
                     const apiAmount = data.data?.amount;
                     const apiTelephone = data.data?.receiver.proxy.value;
-
+    
                     console.log(`API Amount: ${apiAmount}, API Telephone: ${apiTelephone}`);
-                    const apiLastFour = apiTelephone.slice(-4); // ใช้ slice เพื่อดึง 4 ตัวสุดท้าย
-                    const promptpayLastFour = promptpayNumber.split('-').pop(); // ใช้ split เพื่อดึงหมายเลขหลัง '-'
+                    const apiLastFour = apiTelephone.slice(-4);
+                    const promptpayLastFour = promptpayNumber.split('-').pop();
                     console.log(`API Last Four: ${apiLastFour}, Firestore Last Four: ${promptpayLastFour}`);
                    
                     console.log(rentalId); // แสดงค่า rentalId ในคอนโซล
                   
                     const adminPayRef = doc(db, 'adminpay', rentalId);
                     const adminPaySnap = await getDoc(adminPayRef);
-
+    
+                    // ตรวจสอบว่ามีเอกสารใน adminpay หรือไม่ ถ้าไม่มีให้สร้างใหม่
+                    if (!adminPaySnap.exists()) {
+                        await setDoc(adminPayRef, {
+                            rentalsId: rentalId,
+                            paymentStatus: false,
+                            adminEmail: '', // กำหนดค่าเริ่มต้น
+                            adminName: '', // กำหนดค่าเริ่มต้น
+                            dateTimePay: Timestamp.now(),
+                            CheckSlip: false
+                        });
+                        console.log("เอกสาร adminpay ถูกสร้างขึ้นใหม่");
+                    }
+    
                     // ตรวจสอบจำนวนเงินและหมายเลข PromptPay
                     if (apiAmount !== totalAmount) {
                         await updateDoc(adminPayRef, {
-                            paymentStatus : false,
+                            paymentStatus: false,
                             CheckSlip: false
                         });
                         setPaymentStatus('not paid');
                         setMessage('จำนวนเงินไม่ตรงกัน กรุณาตรวจสอบสลิป');
-
+                    
                     } else if (apiLastFour !== promptpayLastFour) {
-                        await updateDoc(rentalRef, {
+                        await updateDoc(adminPayRef, {
                             paymentStatus: false,
                             CheckSlip: false
                         });
                         setPaymentStatus('not paid');
                         setMessage('หมายเลข PromptPay ไม่ตรงกัน กรุณาตรวจสอบสลิป');
                     } else {
-                        await updateDoc(rentalRef, {
-                            paymentStatus: false,
+                        await updateDoc(adminPayRef, {
+                            paymentStatus: true,
                             slippaylessorUrl: fileURL,
                             CheckSlip: true
                         });
                         setPaymentStatus('paid');
                         setMessage('ชำระเงินเรียบร้อยแล้ว!');
                     }
+                    
                 } else {
                     setPaymentStatus(false);
                     setMessage('การตรวจสอบสลิปไม่สำเร็จ กรุณาตรวจสอบข้อมูลของคุณ');
@@ -107,6 +121,7 @@ console.log("rentalId : " , rentalId)
             setMessage(`เกิดข้อผิดพลาดระหว่างการอัปโหลดสลิป: ${error.message}`);
         }
     };
+    
 
     const handleBackButtonClick = () => {
         navigate('/AdminQRCode');

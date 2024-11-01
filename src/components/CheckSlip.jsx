@@ -42,10 +42,10 @@ function CheckSlip() {
       const formData = new FormData();
       formData.append("files", files);
   
-      const res = await fetch("https://api.slipok.com/api/line/apikey/31011", {
+      const res = await fetch("https://api.slipok.com/api/line/apikey/33075", {
         method: "POST",
         headers: {
-          "x-authorization": "SLIPOK64TXGV0"
+          "x-authorization": "SLIPOK7K2C7YI"
         },
         body: formData
       });
