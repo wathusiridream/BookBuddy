@@ -7,11 +7,7 @@ import { useLocation, useNavigate } from 'react-router-dom'; // Import useLocati
 import NavBar from './NavBar';
 import { arrowBack } from 'ionicons/icons';
 import { IonIcon } from '@ionic/react';
-<<<<<<< HEAD
-import { toast, ToastContainer } from 'react-toastify';
-=======
 import { toast, ToastContainer } from 'react-toastify'; // เพิ่มการนำเข้า ToastContainer
->>>>>>> 61bb4cb3a2f212c1dd054d75179bd643bff53198
 import 'react-toastify/dist/ReactToastify.css';
 
 function CheckSlip() {
@@ -78,12 +74,6 @@ function CheckSlip() {
                 const apiLastFour = apiTelephone.slice(-4); // ใช้ slice เพื่อดึง 4 ตัวสุดท้าย
                 const promptpayLastFour = promptpayNumber.split('-').pop(); // ใช้ split เพื่อดึงหมายเลขหลัง '-'
 
-<<<<<<< HEAD
-          console.log(`API Amount: ${apiAmount}, API Telephone: ${apiTelephone}`);
-          const apiLastFour = apiTelephone.slice(-4); // ใช้ slice เพื่อดึง 4 ตัวสุดท้าย
-          const promptpayLastFour = promptpayNumber.slice(-4); // ใช้ split เพื่อดึงหมายเลขหลัง '-'
-          console.log(`API Last Four: ${apiLastFour}, Firestore Last Four: ${promptpayLastFour}`);
-=======
                 // ตรวจสอบจำนวนเงินและหมายเลข PromptPay
                 if (apiAmount !== totalAmount) {
                     await updateDoc(rentalRef, {
@@ -92,7 +82,6 @@ function CheckSlip() {
                     });
                     setPaymentStatus('ยังไม่ได้ชำระเงิน');
                     toast.error('จำนวนเงินไม่ตรงกัน กรุณาตรวจสอบสลิป');
->>>>>>> 61bb4cb3a2f212c1dd054d75179bd643bff53198
 
                 } else if (apiLastFour !== promptpayLastFour) {
                     await updateDoc(rentalRef, {
@@ -110,38 +99,6 @@ function CheckSlip() {
                     setPaymentStatus('ชำระเงินเรียบร้อย');
                     toast.success('ชำระเงินเรียบร้อยแล้ว!');
 
-<<<<<<< HEAD
-          // ตรวจสอบจำนวนเงินและหมายเลข PromptPay
-          if (apiAmount !== totalAmount) {
-            await updateDoc(rentalRef, {
-              paymentStatus: 'not paid',
-              CheckSlip: false
-            });
-            setPaymentStatus('not paid');
-            toast.error('จำนวนเงินไม่ตรงกัน กรุณาตรวจสอบสลิป');
-
-          } else if (apiLastFour !== promptpayLastFour) {
-            await updateDoc(rentalRef, {
-              paymentStatus: 'not paid',
-              CheckSlip: false
-            });
-            setPaymentStatus('not paid');
-            toast.error('หมายเลข PromptPay ไม่ตรงกัน กรุณาตรวจสอบสลิป');
-          } else {
-            await updateDoc(rentalRef, {
-              paymentStatus: 'paid',
-              slippaylessorUrl: fileURL,
-              CheckSlip: true
-            });
-            setPaymentStatus('paid');
-            toast.success('ชำระเงินเรียบร้อยแล้ว!');
-
-            setTimeout(() => {
-              navigate('/RentHistory');
-          }, 3000);
-
-          }
-=======
                     // ใช้ setTimeout เพื่อรอให้ Toast หายไปก่อนที่จะนำทาง
                     // ใช้ setTimeout เพื่อรอให้ Toast หายไปก่อนที่จะนำทาง
                     setTimeout(() => {
@@ -153,7 +110,6 @@ function CheckSlip() {
                 setPaymentStatus('not paid');
                 toast.error('การตรวจสอบสลิปไม่สำเร็จ กรุณาตรวจสอบข้อมูลของคุณ');
             }
->>>>>>> 61bb4cb3a2f212c1dd054d75179bd643bff53198
         } else {
             throw new Error("การส่งคำขอล้มเหลว");
         }
