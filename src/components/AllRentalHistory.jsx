@@ -1,104 +1,68 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { collection, getDocs, doc, updateDoc } from 'firebase/firestore'; // Ensure these are correctly imported
+import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../utils/firebase';
-import NavBar from './NavBar'; // Import your NavBar component
 import AdminNavBar from './AdminNavBar';
-function AllRentalHistory() {
-  const [rentalHistory, setRentalHistory] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('notReceived');
+import '../WebStyle/AllRentalHistory.css'; // นำเข้า CSS ถ้าต้องการ
 
-  const navigate = useNavigate(); // Create navigate variable
+const AllRentalHistory = () => {
+    const [rentalHistory, setRentalHistory] = useState([]);
+    const [forRents, setForRents] = useState([]); // State สำหรับ ForRents
 
-  useEffect(() => {
-    const fetchRentalHistory = async () => {
-      try {
-        const rentalCollection = collection(db, 'rentals');
-        const rentalSnapshot = await getDocs(rentalCollection);
+    useEffect(() => {
+        const fetchRentals = async () => {
+            const rentalsSnapshot = await getDocs(collection(db, 'rentals'));
+            const rentalsData = rentalsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            setRentalHistory(rentalsData);
+        };
 
-        const rentalList = rentalSnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
+        const fetchForRents = async () => {
+            const forRentsSnapshot = await getDocs(collection(db, 'ForRents'));
+            const forRentsData = forRentsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            setForRents(forRentsData);
+        };
 
-        setRentalHistory(rentalList);
-      } catch (error) {
-        console.error('Error fetching rental history:', error);
-      } finally {
-        setLoading(false);
-      }
+        fetchRentals();
+        fetchForRents();
+    }, []);
+
+    const gradientStyle = {
+      background: 'linear-gradient(180deg, rgba(67, 179, 174, 1) 0%, rgba(67, 179, 174, 0.76) 21%, rgba(245, 245, 220, 0.48) 76%, rgba(255, 255, 255, 0) 100%)',
+      height: '100vh',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      color: '#000',
     };
 
-    fetchRentalHistory();
-  }, []);
-
-  const handleReceive = async (rentalId) => {
-    try {
-      const rentalRef = doc(db, 'rentals', rentalId);
-      await updateDoc(rentalRef, { receivedStatus: 'received' });
-
-      // Navigate to ReceiveDetails page
-      navigate(`/receive-details/${rentalId}`);
-    } catch (error) {
-      console.error('Error updating received status:', error);
-      alert('เกิดข้อผิดพลาดในการยืนยันการได้รับของ');
-    }
-  };
-
-  const filterRentals = () => {
-    if (activeTab === 'notReceived') {
-      return rentalHistory.filter((rental) => rental.receivedStatus !== 'received');
-    } else if (activeTab === 'returned') {
-      return rentalHistory.filter((rental) => rental.receivedStatus === 'received' && rental.returnStatus === 'not yet');
-    }
-    return rentalHistory;
-  };
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  return (
-    <div>
-      <AdminNavBar />
-      <div className="rent-history-container">
-        <h2>ประวัติการเช่าทั้งหมดในระบบ</h2>
-
-        <div className="tabs">
-          <button onClick={() => setActiveTab('notReceived')} className={activeTab === 'notReceived' ? 'active' : ''}>
-            รายการที่ยังไม่ได้รับ
-          </button>
-          <button onClick={() => setActiveTab('returned')} className={activeTab === 'returned' ? 'active' : ''}>
-            รายการที่คืนแล้ว
-          </button>
-        </div>
-
-        <div className="rental-list">
-          {filterRentals().length > 0 ? (
-            filterRentals().map((rental) => (
-              <div key={rental.id} className="rental-item">
-                <img src={rental.image} alt={rental.productName} className="rental-image" />
-                <div className="rental-details">
-                  <h3>{rental.productName}</h3>
-                  <p>ชื่อ: {rental.firstName} {rental.lastName}</p>
-                  <p>จำนวน: {rental.quantity}</p>
-                  <p>ราคาเช่าต่อวัน: {rental.rentalPrice} บาท</p>
-                  <p>รวมราคา: {rental.totalAmount} บาท</p>
-                  <p>สถานะการชำระเงิน: {rental.paymentStatus}</p>
-                  <p>สถานะการได้รับของ: {rental.receivedStatus || 'รอจัดส่ง'}</p>
-                  <p>สถานะการคืนของ: {rental.returnStatus || 'รอคืนของ'}</p>
-                  <button onClick={() => handleReceive(rental.id)}>ยืนยันการได้รับ</button>
+    return (
+        <div>
+            <AdminNavBar />
+            <div className='allhistory-rent-history'>
+                <h1>ประวัติการเช่าทั้งหมด</h1>
+                <div className="allhistorycard-container" >
+                    {rentalHistory.map(rental => {
+                        const forRentItem = forRents.find(item => item.id === rental.bookId); // ค้นหา ForRents ตาม bookId
+                        return (
+                            <div className="allhistorycard" key={rental.rentalId}>
+                                <h2>{rental.nameRented}</h2>
+                                {forRentItem && ( // ตรวจสอบว่า forRentItem มีข้อมูล
+                                    <p>ผู้ปล่อยเช่า : {forRentItem.firstname} {forRentItem.lastName}</p>
+                                )}
+                                <p>ผู้เช่า : {rental.firstName} {rental.lastName}</p>
+                                <p>เบอร์โทรศัพท์ผู้เช่า : {rental.phone}</p>
+                                <p>วันที่เริ่มเช่า :{rental.date_rented}</p>
+                                <p>วันที่คืน : {rental.date_return}</p>
+                                <p>จำนวนวันที่เช่า : {rental.days}</p>
+                                <p>ค่าเช่าสุทธิ : {rental.totalAmount} THB</p>
+                                <p>สถานะการชำระค่าเช่า : {rental.paymentStatus}</p>
+                                <p>เลขพัสดุ : {rental.tracking_number}</p>                                
+                            </div>
+                        );
+                    })}
                 </div>
-              </div>
-            ))
-          ) : (
-            <p>ไม่มีข้อมูลที่จะแสดง</p>
-          )}
+            </div>        
         </div>
-      </div>
-    </div>
-  );
-}
+    );
+};
 
 export default AllRentalHistory;

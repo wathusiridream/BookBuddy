@@ -1,0 +1,25 @@
+.all-members{
+    max-width: 100vw;
+    margin-left: 1rem;
+  
+}
+.member-card-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.member-card {
+    background: #f9f9f9; /* สีพื้นหลังของ Card */
+    border: 1px solid #ddd; /* กรอบของ Card */
+    border-radius: 8px; /* มุมโค้ง */
+    padding: 20px; /* Padding ภายใน Card */
+    margin: 10px; /* ระยะห่างระหว่าง Card */
+    width: calc(33.333% - 20px); /* กำหนดขนาด Card เป็น 1/3 ของพื้นที่ */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* เงา */
+    transition: transform 0.3s; /* เพิ่มการเคลื่อนไหวเมื่อโฮเวอร์ */
+}
+
+.member-card:hover {
+    transform: translateY(-5px); /* เลื่อนขึ้นเมื่อโฮเวอร์ */
+}

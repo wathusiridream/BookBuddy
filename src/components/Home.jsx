@@ -10,7 +10,7 @@ import RentalForm from './RentalForm';
 import RentHistory from './RentHistory';
 import QRCodeGenerator from './QRCode';
 import DropDownProfile from './DropDownProfile';
-
+import NavBar from './NavBar';
 const Home = () => {
   const [user, setUser] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -62,6 +62,10 @@ const Home = () => {
     navigate('/ProfileEdit');
   };
   
+  const handleAboutUS = () => {
+    navigate('/AboutUs');
+}
+
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const handleProfileClick = () => {
     setShowProfileMenu(!showProfileMenu);
@@ -81,7 +85,7 @@ return (
               <li style={{color : 'black'}}><a href='#' >หน้าหลัก</a></li>
               <li style={{color : 'black'}}><a href='#' onClick={handleSeeAllBooks}>หนังสือทั้งหมด</a></li>
               <li style={{color : 'black'}}><a href='#' onClick={handleForRent}>ปล่อยเช่า</a></li>
-              <li style={{color : 'black'}}><a href='#'>เกี่ยวกับเรา</a></li>
+              <li style={{color : 'black'}}><a href='#' onClick={handleAboutUS}>เกี่ยวกับเรา</a></li>
             </ul>
           </div>
           <div className='login-sec'>

@@ -43,18 +43,21 @@ function AdminHomepage() {
       <div className='adminhome-content'>
         <div className='adminhome-container' style={gradientStyle}>
           <div className="card-container">
-            <div className="card">
-              <img src="6111095.jpg" alt="สมาชิก" />
-              <h2>ข้อมูลสมาชิกในระบบ</h2>
+          <div className="card" onClick={() => navigate('/AdminRentaltoPay')}>
+              <img src="salary02.jpg" alt="การจ่ายเงิน" />
+              <h2>จ่ายเงินค่าเช่าให้ผู้ปล่อยเช่า</h2>
             </div>
+           
             <div className="card" onClick={() => navigate('/AllRental')}>
               <img src="rentallist.jpg" alt="รายการเช่า" />
               <h2>รายการการเช่าทั้งหมด</h2>
             </div>
-            <div className="card" onClick={() => navigate('/AdminRentaltoPay')}>
-              <img src="salary02.jpg" alt="การจ่ายเงิน" />
-              <h2>จ่ายเงินค่าเช่าให้ผู้ปล่อยเช่า</h2>
+            
+            <div className="card" onClick={() => navigate('/AllMembers')}>
+              <img src="6111095.jpg" alt="สมาชิก" />
+              <h2>ข้อมูลสมาชิกในระบบ</h2>
             </div>
+            
           </div>
         </div>
       </div>

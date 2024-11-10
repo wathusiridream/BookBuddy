@@ -45,10 +45,10 @@ const UserInformationForm = () => {
     province: '',
     zipCode: '',
     
-    promptpayNumber: '',
+    
   });
 
-  const steps = ['ข้อมูลส่วนตัว', 'ที่อยู่', 'บัญชีธนาคาร', 'ยืนยันข้อมูล'];
+  const steps = ['ข้อมูลส่วนตัว', 'ที่อยู่', 'ยืนยันข้อมูล'];
   const auth = getAuth();
   const [birthDate, setBirthDate] = useState(null);
   const today = new Date();
@@ -93,7 +93,7 @@ const UserInformationForm = () => {
       province: '',
       zipCode: '',
       thaiID: '',
-      promptpayNumber: '',
+      
       bookName: '',
       genre: '',
       isbn: '',
@@ -114,8 +114,7 @@ const UserInformationForm = () => {
       formattedValue = formatTelephone(value);
     } else if (name === 'thaiID') {
       formattedValue = formatThaiID(value);
-    } else if (name === 'promptpayNumber') {
-      formattedValue = formatPromptPay(value);
+    
     }
 
     setFormData((prevData) => ({
@@ -299,7 +298,7 @@ const UserInformationForm = () => {
       province: 'จังหวัด',
       zipCode: 'รหัสไปรษณีย์',
 
-      promptpayNumber: 'หมายเลขพร้อมเพย์',
+      
     };
 
     return labels[key] || key; // ถ้าไม่พบให้คืนค่า key เดิม
@@ -562,32 +561,6 @@ const UserInformationForm = () => {
         );                     
       case 2:
         return (
-          <div className='lessors-information'>
-            <div className="input-with-icon">
-              <img 
-                src="https://upload.wikimedia.org/wikipedia/commons/c/c5/PromptPay-logo.png" 
-                alt="PromptPay logo" 
-                style={{ width: '170px', 
-                         height: '84px', 
-                         marginRight: '8px' 
-                      }} 
-              />              
-            <TextField 
-                label="หมายเลขพร้อมเพย์" 
-                name="promptpayNumber"
-                value={formData.promptpayNumber}
-                onChange={handleChange}
-                margin="normal"
-                variant="outlined"
-                color="secondary"
-                inputProps={{ maxLength: 12 }}
-                fullWidth
-              />
-            </div>
-          </div>
-        );
-      case 3:
-        return (
             <div className='lessors-information'>
               <Typography variant="h6" color="error">กรุณาตรวจสอบข้อมูลก่อนยืนยัน</Typography>
               <br />
@@ -604,16 +577,7 @@ const UserInformationForm = () => {
                   </CardContent>
                 </Card>
 
-                {/* Card 2: ข้อมูลการเงิน */}
-                <Card variant="outlined" style={{ marginBottom: '20px' }} className='detailcard'>
-                  <CardContent >
-                    <Typography variant="h6">ข้อมูลการเงิน</Typography>
-                    <div className='review-item'>
-                      <Typography className="label">{translateLabel('promptpayNumber')}:</Typography>
-                      <Typography className="value">{formData.promptpayNumber}</Typography>
-                    </div>
-                  </CardContent>
-                </Card>
+                
 
                 {/* Card 3: ที่อยู่ */}
                 <Card variant="outlined" style={{ marginBottom: '20px' }} className='detailcard' >

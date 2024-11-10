@@ -1,105 +1,112 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import '../WebStyle/CheckSlip.css';
-import { db, storage } from './../utils/firebase'; // Import Firestore and Storage
-import { doc, updateDoc, getDoc , setDoc , Timestamp } from 'firebase/firestore'; // Import Firestore functions
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'; // Import storage functions
-import { useLocation, useNavigate } from 'react-router-dom'; // Import useLocation
+import { db, storage } from './../utils/firebase';
+import { doc, updateDoc, getDoc, setDoc, Timestamp } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { useLocation, useNavigate } from 'react-router-dom';
 import AdminNavBar from './AdminNavBar';
 import { arrowBack } from 'ionicons/icons';
 import { IonIcon } from '@ionic/react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function AdminCheckSlip() {
     const location = useLocation();
-    const { amount, rentalId, promptpayNumber } = location.state || {}; 
-console.log("rentalId : " , rentalId)
+    const { amount, rentalId, promptpayNumber } = location.state || {};
     const navigate = useNavigate();
     const [files, setFiles] = useState(null);
     const [slipOkData, setSlipOkData] = useState(null);
-    const [message, setMessage] = useState('');
     const [paymentStatus, setPaymentStatus] = useState('not paid');
+    const [preview, setPreview] = useState(null);
+    const [loading, setLoading] = useState(false); // Loading state
 
     const handleFileChange = (e) => {
-        setFiles(e.target.files[0]);
+        const file = e.target.files[0];
+        if (file && file.type.startsWith('image/')) { // Validate file type
+            setFiles(file);
+
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+        } else {
+            toast.error('กรุณาเลือกไฟล์ภาพเท่านั้น'); // Error message for invalid file type
+            setFiles(null);
+            setPreview(null); // Reset preview
+        }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!files) {
-            setMessage('กรุณาอัปโหลดไฟล์ก่อนส่งข้อมูล');
+            toast.error('กรุณาอัปโหลดไฟล์ก่อนส่งข้อมูล');
             return;
         }
+
+        setLoading(true); // Set loading state
         try {
-            // Upload the file to Firebase Storage
             const storageRef = ref(storage, `slips/${rentalId}/${files.name}`);
             await uploadBytes(storageRef, files);
             const fileURL = await getDownloadURL(storageRef);
-    
-            // Call the external API to check the slip
+
             const formData = new FormData();
             formData.append("files", files);
-    
+
             const res = await fetch("https://api.slipok.com/api/line/apikey/33075", {
+
                 method: "POST",
                 headers: {
-                    "x-authorization": "SLIPOK7K2C7YI"
+                  "x-authorization": "SLIPOK7K2C7YI"
                 },
                 body: formData
-            });
-    
+              });
+
             if (res.ok) {
                 const data = await res.json();
-                console.log("API Response Data:", data);
-    
                 setSlipOkData(data.data);
-                setMessage('กำลังตรวจสอบลสิป โปรดรอสักครู่');
-    
-                if (data.data?.success === true) {
+                toast.info('กำลังตรวจสอบลสิป โปรดรอสักครู่');
+
+                if (data.data?.success) {
                     const rentalRef = doc(db, 'rentals', rentalId);
                     const rentalSnap = await getDoc(rentalRef);
                     const totalAmount = rentalSnap.data()?.totalAmount;
-    
+
                     const apiAmount = data.data?.amount;
                     const apiTelephone = data.data?.receiver.proxy.value;
-    
-                    console.log(`API Amount: ${apiAmount}, API Telephone: ${apiTelephone}`);
                     const apiLastFour = apiTelephone.slice(-4);
                     const promptpayLastFour = promptpayNumber.split('-').pop();
-                    console.log(`API Last Four: ${apiLastFour}, Firestore Last Four: ${promptpayLastFour}`);
-                   
-                    console.log(rentalId); // แสดงค่า rentalId ในคอนโซล
-                  
+
                     const adminPayRef = doc(db, 'adminpay', rentalId);
                     const adminPaySnap = await getDoc(adminPayRef);
-    
-                    // ตรวจสอบว่ามีเอกสารใน adminpay หรือไม่ ถ้าไม่มีให้สร้างใหม่
+
+                    // Create adminPay document if it doesn't exist
                     if (!adminPaySnap.exists()) {
                         await setDoc(adminPayRef, {
                             rentalsId: rentalId,
                             paymentStatus: false,
-                            adminEmail: '', // กำหนดค่าเริ่มต้น
-                            adminName: '', // กำหนดค่าเริ่มต้น
+                            adminEmail: '',
+                            adminName: '',
                             dateTimePay: Timestamp.now(),
                             CheckSlip: false
                         });
-                        console.log("เอกสาร adminpay ถูกสร้างขึ้นใหม่");
                     }
-    
-                    // ตรวจสอบจำนวนเงินและหมายเลข PromptPay
+
+                    // Validate payment amounts and PromptPay number
                     if (apiAmount !== totalAmount) {
                         await updateDoc(adminPayRef, {
                             paymentStatus: false,
                             CheckSlip: false
                         });
                         setPaymentStatus('not paid');
-                        setMessage('จำนวนเงินไม่ตรงกัน กรุณาตรวจสอบสลิป');
-                    
+                        toast.error('จำนวนเงินไม่ตรงกัน กรุณาตรวจสอบสลิป');
                     } else if (apiLastFour !== promptpayLastFour) {
                         await updateDoc(adminPayRef, {
                             paymentStatus: false,
                             CheckSlip: false
                         });
                         setPaymentStatus('not paid');
-                        setMessage('หมายเลข PromptPay ไม่ตรงกัน กรุณาตรวจสอบสลิป');
+                        toast.error('หมายเลข PromptPay ไม่ตรงกัน กรุณาตรวจสอบสลิป');
                     } else {
                         await updateDoc(adminPayRef, {
                             paymentStatus: true,
@@ -107,27 +114,32 @@ console.log("rentalId : " , rentalId)
                             CheckSlip: true
                         });
                         setPaymentStatus('paid');
-                        setMessage('ชำระเงินเรียบร้อยแล้ว!');
+                        toast.success('ชำระเงินเรียบร้อยแล้ว!');
+
+                        setTimeout(() => {
+                            navigate('/AdminRentaltoPay');
+                        }, 3000);
                     }
-                    
                 } else {
                     setPaymentStatus(false);
-                    setMessage('การตรวจสอบสลิปไม่สำเร็จ กรุณาตรวจสอบข้อมูลของคุณ');
+                    toast.error('การตรวจสอบสลิปไม่สำเร็จ กรุณาตรวจสอบข้อมูลของคุณ');
                 }
             } else {
                 throw new Error("การส่งคำขอล้มเหลว");
             }
         } catch (error) {
-            setMessage(`เกิดข้อผิดพลาดระหว่างการอัปโหลดสลิป: ${error.message}`);
+            toast.error(`เกิดข้อผิดพลาดระหว่างการอัปโหลดสลิป: ${error.message}`);
+        } finally {
+            setLoading(false); // Reset loading state
         }
     };
-    
 
     const handleBackButtonClick = () => {
         navigate('/AdminQRCode');
     };
 
-    const promptpayLastFour = promptpayNumber.split('-').pop(); // ใช้ split เพื่อดึงหมายเลขหลัง '-'
+    const promptpayLastFour = promptpayNumber.split('-').pop();
+
     return (
         <div>
             <AdminNavBar />
@@ -146,15 +158,17 @@ console.log("rentalId : " , rentalId)
                 <h2>ตรวจสอบการชำระเงิน</h2>
                 <form onSubmit={handleSubmit}>
                     <input type="file" onChange={handleFileChange} />
-                    <button type="submit">ส่งสลิป</button>
+                    {preview && <img src={preview} alt="Selected file preview" className="file-preview" />}
+                    <button type="submit" disabled={loading}>{loading ? 'กำลังส่ง...' : 'บันทึก'}</button>
                 </form>
-                {message && <p>{message}</p>}
-                <p>สถานะการชำระเงิน: {paymentStatus}</p>
-                <p>จำนวนเงินที่ต้องชำระ: {amount} บาท</p> {/* แสดงจำนวนเงินที่ต้องชำระ */}
-                <p>{promptpayNumber} {promptpayLastFour}</p>
-                <p>รหัสการเช่าที่ต้องตรวจสอบ: {rentalId}</p> {/* เพิ่มบรรทัดนี้เพื่อแสดง rentalId */}
-
             </div>
+            <ToastContainer position="top-center"
+          autoClose={5000}
+          hideProgressBar={false}
+          closeOnClick
+          pauseOnHover
+          draggable
+          theme="light"/>
         </div>
     );
 }

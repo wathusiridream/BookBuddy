@@ -211,7 +211,7 @@ const handleFacebookLogin = async () => {
                   src = "logobook.png"
                   style={{ width: '200px', height: 'auto' }}
                 />
-                <h1>Register Here</h1>
+                <h1>ลงทะเบียน</h1>
 
                 {/* Email Field */}
                 <div style={{ position: 'relative', width: '100%' }}>
@@ -287,9 +287,9 @@ const handleFacebookLogin = async () => {
                 {error && <p className="error" style={{ color: 'red', fontSize: '12px' }}>{error}</p>}
 
                 {/* Register Button */}
-                <button type="submit">Register</button>
+                <button type="submit">ลงทะเบียน</button>
 
-                <span>or use your account</span>
+                <span>หรือ</span>
 
                 {/* Social Buttons */}
                 <div className="social-container">
@@ -321,7 +321,7 @@ const handleFacebookLogin = async () => {
               style={{ width: '200px', height: 'auto' }}
               alt="Login"
             />
-            <h1>Login Here</h1>
+            <h1>เข้าสู่ระบบ</h1>
             {/* Email Field */}
             <div style={{ position: 'relative', width: '100%' }}>
               <IonIcon
@@ -384,14 +384,14 @@ const handleFacebookLogin = async () => {
               </div>
               <div className="pass-link">
                 <a href="#" onClick={handleForgotPasswordClick}>
-                  Forgot Password?
+                  ลืมรหัสผ่าน?
                 </a>
               </div>
             </div>
 
             {/* Login Button */}
-            <button type="submit">Login</button>
-            <span>or use your account</span>
+            <button type="submit">เข้าสู่ระบบ</button>
+            <span>หรือ</span>
 
             {/* Social Buttons */}
             <div className="social-container">
@@ -422,17 +422,17 @@ const handleFacebookLogin = async () => {
       <div className="overlay-container">
         <div className="overlay">
           <div className="overlay-panel overlay-left">
-          <h1 className="title">Welcome Back <br/> to BookBuddy</h1>
-          <p>If you have an account, log in here to continue your book journey!</p>
+          <h1 className="title">ยินดีต้อนรับสู่ <br />BookBuddy</h1>
+          <p>คุณมีบัญชีอยู่แล้วใช่ไหม มาค้นหาหนังสือสนุกันเลย</p>
             <button className="ghost" onClick={toggleLoginPanel}> 
-              Login
+              เข้าสู่ระบบ
             </button>
           </div>
           <div className="overlay-panel overlay-right">
-            <h1 className="title">Welcome to <br />BookBuddy</h1>
-            <p>If you don't have an account, register here to start your reading adventure!</p>
+          <h1 className="title">BookBuddy <br/>เราดีใจที่คุณกลับมา</h1>
+            <p>ถ้าคุณยังไม่มีบัญชี สมัครกับเราได้ที่</p>
             <button className="ghost" onClick={toggleRegisterPanel}> 
-              Register
+              ลงทะเบียน
             </button>
           </div>
         </div>

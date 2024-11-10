@@ -1,20 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import '../WebStyle/RentHistory.css';
 import { db } from './../utils/firebase';
-import { collection, onSnapshot, doc, getDoc, updateDoc  , where} from 'firebase/firestore';
+import { collection, onSnapshot, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import NavBar from './NavBar';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from 'react-router-dom';
 
 function RentHistory() {
   const [rentalHistory, setRentalHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('notReceived');
+  const [trackingReturn, setTrackingReturn] = useState('');
 
   const auth = getAuth();
   const currentUserId = auth.currentUser ? auth.currentUser.uid : null;
-  
+  const navigate = useNavigate();
+
   useEffect(() => {
     const rentalCollection = collection(db, 'rentals');
 
@@ -64,7 +67,6 @@ function RentHistory() {
     return () => unsubscribe();
   }, [currentUserId]);
 
-
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -79,13 +81,14 @@ function RentHistory() {
       await updateDoc(rentalRef, {
         renter_received: true,
         date_return: returnDate.toISOString().split('T')[0],
+        date_rented: currentDate.toISOString().split('T')[0], // เพิ่มการเก็บวันที่เช่า
       });
 
       toast.success(`คุณจะต้องคืนหนังสือภายในวันที่: ${returnDate.toISOString().split('T')[0]}`);
 
       setRentalHistory((prevRentals) =>
         prevRentals.map((rentalItem) =>
-          rentalItem.id === rental.id ? { ...rentalItem, renter_received: true, date_return: returnDate.toISOString().split('T')[0] } : rentalItem
+          rentalItem.id === rental.id ? { ...rentalItem, renter_received: true, date_return: returnDate.toISOString().split('T')[0], date_rented: currentDate.toISOString().split('T')[0] } : rentalItem
         )
       );
     } catch (error) {
@@ -95,20 +98,30 @@ function RentHistory() {
   };
 
   const handleReturn = async (rentalId) => {
+    if (!trackingReturn.trim()) {  // ตรวจสอบว่าได้กรอกเลขพัสดุแล้วหรือยัง
+      alert('กรุณากรอกเลขพัสดุ');
+      return;
+    }
+
     try {
       const rentalRef = doc(db, 'rentals', rentalId);
-      await updateDoc(rentalRef, { renter_returned: true });
+      await updateDoc(rentalRef, {
+        renter_returned: true,
+        tracking_return: trackingReturn  // บันทึกเลขพัสดุการคืน
+      });
 
       setRentalHistory((prevRentals) =>
         prevRentals.map((rental) =>
-          rental.id === rentalId ? { ...rental, renter_returned: true } : rental
+          rental.id === rentalId ? { ...rental, renter_returned: true, tracking_return: trackingReturn } : rental
         )
       );
+      setTrackingReturn('');  // รีเซ็ตค่ากล่อง input หลังการคืนสำเร็จ
     } catch (error) {
       console.error('Error updating return status:', error);
       alert('เกิดข้อผิดพลาดในการคืนหนังสือ');
     }
   };
+
 
   const filterRentals = () => {
     if (activeTab === 'notReceived') {
@@ -120,10 +133,6 @@ function RentHistory() {
     }
     return rentalHistory;
   };
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div>
@@ -149,19 +158,33 @@ function RentHistory() {
               <div key={rental.id} className="rental-item">
                 <h2>ชื่อหนังสือ: {rental.bookName}</h2>
                 <p>ผู้เช่า: {rental.firstName} {rental.lastName}</p>
-                <p>วันเช่า: {rental.rentalDate}</p>
-                <p>วันคืน: {rental.returnDate}</p>
+                <p>วันเช่า: {rental.date_rented}</p>
+                <p>วันคืน: {rental.date_return}</p>
                 <p>ยอดรวม: {rental.totalAmount}</p>
                 <p>เลขพัสดุ: {rental.tracking_number || 'ไม่มีข้อมูล'}</p>
                 <p>สถานะ: {rental.status || 'รอการจัดการ'}</p>
                 <p>สถานะการชำระเงิน: {rental.paymentStatus}</p>
 
-                {activeTab === 'notReceived' && rental.lessor_shipped && !rental.renter_received && (
+                {activeTab === 'notReceived' && rental.lessor_shipped && !rental.renter_received && rental.CheckSlip === true && (
                   <button onClick={() => handleReceive(rental)}>ยืนยันการได้รับของ</button>
                 )}
 
                 {activeTab === 'inProgress' && rental.renter_received && !rental.renter_returned && (
-                  <button onClick={() => handleReturn(rental.id)}>คืนหนังสือแล้ว</button>
+                  <div>
+                    <input
+                      type="text"
+                      placeholder="เลขพัสดุสำหรับการคืน"
+                      value={trackingReturn}
+                      onChange={(e) => setTrackingReturn(e.target.value)}
+                    />
+                    <button onClick={() => handleReturn(rental.id)}>คืนหนังสือแล้ว</button>
+                  </div>
+                )}
+
+                {rental.CheckSlip === false && (
+                  <button onClick={() => navigate('/QRCode', { state: { rentalId: rental.id, amount: rental.totalAmount, promptpayNumber: rental.promptpayNumber } })}>
+                    กรุณาชำระเงิน
+                  </button>
                 )}
               </div>
             ))

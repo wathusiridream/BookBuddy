@@ -1,0 +1,59 @@
+/* General page styling */
+.about-us {
+    max-width: 1000px;
+    margin: auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    color: #333;
+    line-height: 1.6;
+}
+
+.about-us h1 {
+    font-size: 2em;
+    text-align: center;
+    color: #000;
+    margin-bottom: 20px;
+}
+
+.about-us section {
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.about-us section h2 {
+    font-size: 1.5em;
+    color: #43b3ae;
+    margin-bottom: 10px;
+}
+
+.about-us p {
+    font-size: 1em;
+    margin-bottom: 15px;
+}
+
+/* FAQ styling */
+.faq p {
+    margin: 0;
+    padding: 5px 0;
+}
+
+.faq strong {
+    display: block;
+    margin-top: 10px;
+    font-size: 1.1em;
+    color: #333;
+}
+
+/* Contact info styling */
+.contact-info a {
+    color: #43b3ae;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.contact-info a:hover {
+    text-decoration: underline;
+}

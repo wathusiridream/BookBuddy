@@ -23,6 +23,10 @@ import AllMemBers from './components/AllMemBers';
 import AdminQRCode from './components/AdminQRCode';
 import AdminRentaltoPay from './components/AdminRentaltoPay';
 import AdminCheckSlip from './components/AdminCheckSlip';
+import ForRentShowbook from './components/ForRentShowbook';
+import BookDetailEdit from './components/BookDetailEdit';
+import AboutUs from './components/AboutUs';
+
 function App() {
   return (
     <div className="App">
@@ -51,6 +55,10 @@ function App() {
             <Route path='/AdminQRCode' element={<AdminQRCode/>}/>
             <Route path='/AdminRentaltoPay' element={<AdminRentaltoPay/>}/>
             <Route path='/AdminCheckSlip' element={<AdminCheckSlip/>}/>
+            <Route path='/YourBooks' element={<ForRentShowbook/>}/>
+            <Route path='/BookDetailEdit/:id' element={<BookDetailEdit/>}/>
+            <Route path='/AboutUs' element={<AboutUs/>}/>
+
           </Routes>
         </Router>
     </div>

@@ -7,7 +7,7 @@ import { useLocation, useNavigate } from 'react-router-dom'; // Import useLocati
 import NavBar from './NavBar';
 import { arrowBack } from 'ionicons/icons';
 import { IonIcon } from '@ionic/react';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 function CheckSlip() {
@@ -47,13 +47,9 @@ function CheckSlip() {
       // Call the external API to check the slip
       const formData = new FormData();
       formData.append("files", files);
-<<<<<<< HEAD
-  
-      const res = await fetch("https://api.slipok.com/api/line/apikey/33075", {
-=======
 
-      const res = await fetch("https://api.slipok.com/api/line/apikey/31011", {
->>>>>>> 041410e75223d6292c402d017bd11080f00a8183
+      const res = await fetch("https://api.slipok.com/api/line/apikey/33075", {
+
         method: "POST",
         headers: {
           "x-authorization": "SLIPOK7K2C7YI"
@@ -78,7 +74,7 @@ function CheckSlip() {
 
           console.log(`API Amount: ${apiAmount}, API Telephone: ${apiTelephone}`);
           const apiLastFour = apiTelephone.slice(-4); // ใช้ slice เพื่อดึง 4 ตัวสุดท้าย
-          const promptpayLastFour = promptpayNumber.split('-').pop(); // ใช้ split เพื่อดึงหมายเลขหลัง '-'
+          const promptpayLastFour = promptpayNumber.slice(-4); // ใช้ split เพื่อดึงหมายเลขหลัง '-'
           console.log(`API Last Four: ${apiLastFour}, Firestore Last Four: ${promptpayLastFour}`);
 
           // ดึงค่า promptpayNumber จาก Firestore
@@ -111,6 +107,11 @@ function CheckSlip() {
             });
             setPaymentStatus('paid');
             toast.success('ชำระเงินเรียบร้อยแล้ว!');
+
+            setTimeout(() => {
+              navigate('/RentHistory');
+          }, 3000);
+
           }
         } else {
           setPaymentStatus('not paid');
@@ -125,12 +126,21 @@ function CheckSlip() {
   };
 
   const handleBackButtonClick = () => {
-    navigate('/');
+    navigate('/QRCode');
   };
 
   return (
     <div>
       <NavBar />
+      <ToastContainer 
+          position="top-center" 
+          autoClose={3000} 
+          hideProgressBar={false} 
+          closeOnClick 
+          pauseOnHover 
+          draggable 
+          pauseOnFocusLoss 
+      />
       <IonIcon
         icon={arrowBack}
         onClick={handleBackButtonClick}

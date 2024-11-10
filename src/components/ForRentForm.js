@@ -223,7 +223,10 @@ const ForRentForm = () => {
             console.log('Rental information added successfully');
             toast.success('บันทึกข้อมูลสำเร็จ!'); // Show success toast
             handleReset();
-            navigate('/ShowBooks')
+            setTimeout(() => {
+              navigate('/ShowBooks');
+          }, 3000);
+          
         } catch (error) {
             console.error("Error adding rental information: ", error);
             toast.error('บันทึกข้อมูลล้มเหลว!'); // Show error toast
@@ -864,7 +867,7 @@ const ForRentForm = () => {
           draggable 
           pauseOnFocusLoss 
       />
-        <div className="container">
+        <div className="forRent-container">
             <Stepper className="stepper" activeStep={activeStep} alternativeLabel connector={<ColorlibConnector />}>
                 {steps.map((label, index) => (
                     <Step key={index}>

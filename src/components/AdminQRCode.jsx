@@ -93,24 +93,24 @@ function AdminQRCode() {
   };
 
   return (
-    <div style={{ backgroundColor: 'white' }}>
-      <AdminNavBar />
-      <IonIcon
-        icon={arrowBack}
-        onClick={handleBackButtonClick}
-        className="backtoshowbook"
-        aria-label='ย้อนกลับ'
-      />
-      <span
-        className="back-text"
-        onClick={handleBackButtonClick}
-      >
-        ย้อนกลับ
-      </span>
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', padding: '20px' }}>
+    <div style={{backgroundColor : 'white'}}>
+      <AdminNavBar/>
+      <IonIcon 
+                icon={arrowBack}  
+                onClick={handleBackButtonClick}
+                className="backtoshowbook"
+                aria-label='ย้อนกลับ'
+            /> 
+            <span 
+                className="back-text" 
+                onClick={handleBackButtonClick}
+                >ย้อนกลับ
+            </span>
+      <div  style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', padding: '20px'}}>
         <h1>ชำระเงิน</h1>
         <h2>จำนวนเงิน : {amount} บาท</h2>
-        {lessorName && <h3>ผู้ปล่อยเช่า : {lessorName}</h3>}
+        {lessorName && <h3>ผู้ปล่อยเช่า : {lessorName}</h3>} {/* Display lessor's name */}
+        
         
         {qrCode && (
           <div className="timer">
@@ -124,6 +124,28 @@ function AdminQRCode() {
             </div>
           </div>
         )}
+        {<input
+          type="text"
+          value={phoneNumber}
+          onChange={(e) => setPhoneNumber(e.target.value)} // Update phoneNumber on input change
+          placeholder="หมายเลขพร้อมเพย์"
+          disabled
+          style={{ height: '0px' , backgroundColor : 'white' , color : 'white' ,  }} 
+        />}
+        {
+          <p>
+            กรุณาทำตามขั้นตอนที่แนะนำ <br/>
+              1. แคปภาพหน้าจอ<br/>
+              2. เปิดแอปพลิเคชันธนาคารบนอุปกรณ์ของท่าน<br/>
+              3. เลือกไปที่ปุ่ม “สแกน” หรือ “QR Code” และกดที่ “รูปภาพ”<br/>
+              4. เลือกรูปภาพที่ท่านแคปไว้และทำการชำระเงิน <br/>
+              5. หลังจากชำระเงินเสร็จสิ้น กรุณากลับไปตรวจสอบสถานะการชำระเงินในแอป หากสถานะยังไม่มีการอัปเดต กรุณาติดต่อฝ่ายลูกค้าสัมพันธ์<br/>
+              6. อย่าลืมบันทึกหลักฐานการโอนด้วยค่ะ <br/>
+              หมายเหตุ: ช่องทางชำระเงินพร้อมเพย์ใช้ได้กับแอปพลิเคชันธนาคารเท่านั้น 
+              ไม่สามารถชำระผ่านสาขาธนาคารหรือตู้เอทีเอ็ม
+
+          </p>
+        }
         <button onClick={handleConfirm} className="confirm-button">
           ชำระแล้ว
         </button>

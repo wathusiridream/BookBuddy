@@ -9,15 +9,5 @@
   min-height: 100vh; /* ความสูงอย่างน้อย 100% ของ viewport */
   max-width: 100%;
   width: 100vw;
+  background-color: white;
 }
-
-/*@font-face {
-  font-family: 'TCS4Music';
-  src: url('./Fonts/MN Namphrik Long Ruea.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
-
-h1, h2 {
-  font-family: 'TCS4Music', sans-serif;
-}*/

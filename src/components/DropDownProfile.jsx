@@ -33,6 +33,7 @@ return (
             <li onClick={() => handleNavigate('/ProfileEdit')}>แก้ไขข้อมูลส่วนตัว</li>
             <li onClick={() => handleNavigate('/RentHistory')}>ประวัติการเช่า</li>
             <li onClick={() => handleNavigate('/ForRentHistory')}>ประวัติการปล่อยเช่า</li>
+            <li onClick={() => handleNavigate('/YourBooks')}>จัดการหนังสือของคุณ</li>
             <li onClick={handleLogout}>ออกจากระบบ</li>
         </ul>
     </div>

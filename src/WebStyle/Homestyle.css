@@ -14,10 +14,10 @@ body, html {
     font-optical-sizing: auto;
     height: 100vh; 
     width: 100%;
-   /* background-image: url('https://img.freepik.com/free-vector/women-library-reading-searching-books_33099-1732.jpg?t=st=1726922831~exp=1726926431~hmac=9a58ce83f983c83b05b01d58212287d9a7b4120b3cf1cae43188a2ec99fd548b&w=1380');
+    background-image: url('../Background_book.jpg'); /* Access from public folder */
     background-repeat: no-repeat;
     background-position: center;
-    background-size: cover;*/
+    background-size: cover;
     width: 100%; 
     position: absolute; 
     top: 0; 
