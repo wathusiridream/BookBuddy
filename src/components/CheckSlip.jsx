@@ -7,7 +7,11 @@ import { useLocation, useNavigate } from 'react-router-dom'; // Import useLocati
 import NavBar from './NavBar';
 import { arrowBack } from 'ionicons/icons';
 import { IonIcon } from '@ionic/react';
+<<<<<<< HEAD
 import { toast, ToastContainer } from 'react-toastify';
+=======
+import { toast, ToastContainer } from 'react-toastify'; // เพิ่มการนำเข้า ToastContainer
+>>>>>>> 61bb4cb3a2f212c1dd054d75179bd643bff53198
 import 'react-toastify/dist/ReactToastify.css';
 
 function CheckSlip() {
@@ -34,55 +38,79 @@ function CheckSlip() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!files) {
-      toast.error('กรุณาอัปโหลดไฟล์ก่อนส่งข้อมูล');
-      return;
+        toast.error('กรุณาอัปโหลดไฟล์ก่อนส่งข้อมูล');
+        return;
     }
 
     try {
-      // Upload the file to Firebase Storage
-      const storageRef = ref(storage, `slips/${rentalId}/${files.name}`);
-      await uploadBytes(storageRef, files);
-      const fileURL = await getDownloadURL(storageRef);
+        // Upload the file to Firebase Storage
+        const storageRef = ref(storage, `slips/${rentalId}/${files.name}`);
+        await uploadBytes(storageRef, files);
+        const fileURL = await getDownloadURL(storageRef);
 
-      // Call the external API to check the slip
-      const formData = new FormData();
-      formData.append("files", files);
+        // Call the external API to check the slip
+        const formData = new FormData();
+        formData.append("files", files);
+  
+        const res = await fetch("https://api.slipok.com/api/line/apikey/33075", {
+            method: "POST",
+            headers: {
+                "x-authorization": "SLIPOK7K2C7YI"
+            },
+            body: formData
+        });
 
-      const res = await fetch("https://api.slipok.com/api/line/apikey/33075", {
+        if (res.ok) {
+            const data = await res.json();
+            console.log("API Response Data:", data);
 
-        method: "POST",
-        headers: {
-          "x-authorization": "SLIPOK7K2C7YI"
-        },
-        body: formData
-      });
+            setSlipOkData(data.data);
+            toast.info('กำลังตรวจสอบสลิป โปรดรอสักครู่');
 
-      if (res.ok) {
-        const data = await res.json();
-        console.log("API Response Data:", data);
+            if (data.data?.success === true) {
+                const rentalRef = doc(db, 'rentals', rentalId);
+                const rentalSnap = await getDoc(rentalRef);
+                const totalAmount = rentalSnap.data()?.totalAmount;
 
-        setSlipOkData(data.data);
-        toast.info('กำลังตรวจสอบสลิป โปรดรอสักครู่');
+                const apiAmount = data.data?.amount;
+                const apiTelephone = data.data?.receiver.proxy.value;
 
-        if (data.data?.success === true) {
-          const rentalRef = doc(db, 'rentals', rentalId);
-          const rentalSnap = await getDoc(rentalRef);
-          const totalAmount = rentalSnap.data()?.totalAmount;
+                const apiLastFour = apiTelephone.slice(-4); // ใช้ slice เพื่อดึง 4 ตัวสุดท้าย
+                const promptpayLastFour = promptpayNumber.split('-').pop(); // ใช้ split เพื่อดึงหมายเลขหลัง '-'
 
-          const apiAmount = data.data?.amount;
-          const apiTelephone = data.data?.receiver.proxy.value;
-
+<<<<<<< HEAD
           console.log(`API Amount: ${apiAmount}, API Telephone: ${apiTelephone}`);
           const apiLastFour = apiTelephone.slice(-4); // ใช้ slice เพื่อดึง 4 ตัวสุดท้าย
           const promptpayLastFour = promptpayNumber.slice(-4); // ใช้ split เพื่อดึงหมายเลขหลัง '-'
           console.log(`API Last Four: ${apiLastFour}, Firestore Last Four: ${promptpayLastFour}`);
+=======
+                // ตรวจสอบจำนวนเงินและหมายเลข PromptPay
+                if (apiAmount !== totalAmount) {
+                    await updateDoc(rentalRef, {
+                        paymentStatus: 'ยังไม่ได้ชำระเงิน',
+                        CheckSlip: false
+                    });
+                    setPaymentStatus('ยังไม่ได้ชำระเงิน');
+                    toast.error('จำนวนเงินไม่ตรงกัน กรุณาตรวจสอบสลิป');
+>>>>>>> 61bb4cb3a2f212c1dd054d75179bd643bff53198
 
-          // ดึงค่า promptpayNumber จาก Firestore
-          const bookRef = doc(db, 'ForRents', rentalId);
-          const bookSnap = await getDoc(bookRef);
-          const promptpayNum = promptpayNumber;
-          console.log(`Firestore PromptPay Number: ${promptpayNum}`);
+                } else if (apiLastFour !== promptpayLastFour) {
+                    await updateDoc(rentalRef, {
+                        paymentStatus: 'ยังไม่ได้ชำระเงิน',
+                        CheckSlip: false
+                    });
+                    setPaymentStatus('ยังไม่ได้ชำระเงิน');
+                    toast.error('หมายเลข PromptPay ไม่ตรงกัน กรุณาตรวจสอบสลิป');
+                } else {
+                    await updateDoc(rentalRef, {
+                        paymentStatus: 'ชำระเงินเรียบร้อย',
+                        slippaylessorUrl: fileURL,
+                        CheckSlip: true
+                    });
+                    setPaymentStatus('ชำระเงินเรียบร้อย');
+                    toast.success('ชำระเงินเรียบร้อยแล้ว!');
 
+<<<<<<< HEAD
           // ตรวจสอบจำนวนเงินและหมายเลข PromptPay
           if (apiAmount !== totalAmount) {
             await updateDoc(rentalRef, {
@@ -113,17 +141,28 @@ function CheckSlip() {
           }, 3000);
 
           }
+=======
+                    // ใช้ setTimeout เพื่อรอให้ Toast หายไปก่อนที่จะนำทาง
+                    // ใช้ setTimeout เพื่อรอให้ Toast หายไปก่อนที่จะนำทาง
+                    setTimeout(() => {
+                      navigate('/'); // กลับไปที่หน้า Home
+                    }, 8000); // 8000ms = 8 วินาที
+                    // 5000ms = 5 วินาที
+                  }
+            } else {
+                setPaymentStatus('not paid');
+                toast.error('การตรวจสอบสลิปไม่สำเร็จ กรุณาตรวจสอบข้อมูลของคุณ');
+            }
+>>>>>>> 61bb4cb3a2f212c1dd054d75179bd643bff53198
         } else {
-          setPaymentStatus('not paid');
-          toast.error('การตรวจสอบสลิปไม่สำเร็จ กรุณาตรวจสอบข้อมูลของคุณ');
+            throw new Error("การส่งคำขอล้มเหลว");
         }
-      } else {
-        throw new Error("การส่งคำขอล้มเหลว");
-      }
     } catch (error) {
-      toast.error(`เกิดข้อผิดพลาดระหว่างการอัปโหลดสลิป: ${error.message}`);
+        toast.error(`เกิดข้อผิดพลาดระหว่างการอัปโหลดสลิป: ${error.message}`);
     }
-  };
+};
+
+
 
   const handleBackButtonClick = () => {
     navigate('/QRCode');
@@ -159,7 +198,17 @@ function CheckSlip() {
           {previewURL && <img src={previewURL} alt="Selected file preview" className="file-preview" />} {/* Preview Image */}
           <button type="submit">ส่งสลิป</button>
         </form>
+        
       </div>
+      <ToastContainer
+          position="top-center"
+          autoClose={5000}
+          hideProgressBar={false}
+          closeOnClick
+          pauseOnHover
+          draggable
+          theme="light"
+        />
     </div>
   );
 }

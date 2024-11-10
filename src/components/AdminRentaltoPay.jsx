@@ -131,35 +131,41 @@ function AdminRentaltoPay() {
         </div>
 
         <div className="rental-list">
-            {filteredRentals.length > 0 ? (
-              filteredRentals.map((rental) => (
-                <div key={rental.id} className="rental-item">
-                  <h2>ชื่อหนังสือ: {rental.bookName || 'ไม่มีข้อมูล'}</h2> <br/>
-                  <p>ผู้ปล่อยเช่า: {rental.ownerFirstName} {rental.ownerLastName}</p><br/>
-                  <p>ผู้เช่า: {rental.firstName} {rental.lastName}</p><br/>
-                  <p>วันที่ยืม: {rental.date_rented}</p><br/>
-                  <p>วันที่คืน: {rental.date_return}</p><br/>
-                  <p>ราคาเช่า: {rental.totalAmount}</p><br/>
-                  {activeTab === 'pending' && (
-                    <button onClick={() => handlePayment(rental)}>
-                      ชำระเงิน
-                    </button>
-                  )}
-                </div>
-              ))
-            ) : (
-              <p>ไม่มีข้อมูลที่จะแสดง</p>
-            )}
-          </div>
-          <ToastContainer
-            position="top-center"
-            autoClose={5000}
-            hideProgressBar={false}
-            closeOnClick
-            pauseOnHover
-            draggable
-            theme="light"
-          />
+  {filteredRentals.length > 0 ? (
+    filteredRentals.map((rental) => (
+      <div key={rental.id} className="rental-item">
+        <h2>ชื่อหนังสือ: {rental.bookName}</h2>
+        <p>ผู้เช่า: {rental.firstName} {rental.lastName}</p>
+        <p>วันเช่า: {rental.rentalDate}</p>
+        <p>วันคืน: {rental.date_return}</p>
+        <p>ยอดรวม: {rental.totalAmount}</p>
+        <p>เลขพัสดุ: {rental.tracking_number || 'ไม่มีข้อมูล'}</p>
+        <p>สถานะ: {rental.status || 'รอการจัดการ'}</p>
+        <p>สถานะการชำระเงิน: {rental.paymentStatus}</p>
+
+        {/* แสดงปุ่ม "จ่ายตัง" เฉพาะใน tab "รอการชำระเงิน" */}
+        {activeTab === 'pending' && (
+          <button onClick={() => handlePayment(rental)}>
+            จ่ายตัง
+          </button>
+        )}
+      </div>
+    ))
+  ) : (
+    <p>ไม่มีข้อมูลที่จะแสดง</p>
+  )}
+</div>
+
+
+        <ToastContainer
+          position="top-center"
+          autoClose={5000}
+          hideProgressBar={false}
+          closeOnClick
+          pauseOnHover
+          draggable
+          theme="light"
+        />
       </div>
     </div>
   );
